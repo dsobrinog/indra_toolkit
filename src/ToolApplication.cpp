@@ -2,14 +2,24 @@
 
 #include <algorithm>
 
+
+
 using namespace indra_toolkit;
 
 // Initialization
 
-indra_toolkit::ToolApplication::ToolApplication(const std::string &name): _appname(name) { }
+indra_toolkit::ToolApplication::ToolApplication(const std::string& appname): _appname(appname)
+{ }
+
+indra_toolkit::ToolApplication::ToolApplication(const std::string& name, int width, int height)
+: _appname(name), _width(width), _height(height) 
+{ }
+
 
 bool ToolApplication::Initialize()
 {
+    app_state = ApplicationState::INIT;
+
     if(!InitGLFW())
     {
         std::cout << "GLFW Failed! " << std::endl;
@@ -27,12 +37,12 @@ bool ToolApplication::Initialize()
     } 
 
     InitCommsWorker();
-    executing = true;
 
     OnInit();
+
+    app_state = ApplicationState::ACTIVE;
     return true;
 }
-
 
 bool ToolApplication::InitGLFW()
 {
@@ -135,6 +145,16 @@ void ToolApplication::Update()
     //std::cout << "FPS: " << io.Framerate << std::endl;
 }
 
+bool indra_toolkit::ToolApplication::IsActive()
+{
+    return app_state != ApplicationState::ACTIVE || !glfwWindowShouldClose(_window);
+}
+
+void indra_toolkit::ToolApplication::QuitApplication()
+{
+    app_state = ApplicationState::CLOSE;
+}
+
 void ToolApplication::Shutdown()
 {
     OnEnd();
@@ -145,6 +165,8 @@ void ToolApplication::Shutdown()
     glfwTerminate();
 }
 
+
+// Layers
 Layer* ToolApplication::RegisterLayer(Layer* layer)
 {
     _layers.push_back(std::unique_ptr<Layer>(layer));
@@ -162,6 +184,8 @@ void ToolApplication::UnregisterLayer(Layer* layer)
     }
 }
 
+
+// Modules
 void ToolApplication::RegisterModule(Module* module)
 {
     if (module->OnInit())
@@ -170,8 +194,7 @@ void ToolApplication::RegisterModule(Module* module)
     }
 }
 
-bool indra_toolkit::ToolApplication::IsExecuting()
+Module* indra_toolkit::ToolApplication::GetModuleByName(const std::string& module_name)
 {
-    // if (!_window) return false;  
-    return executing || !glfwWindowShouldClose(_window);
+    return nullptr;
 }

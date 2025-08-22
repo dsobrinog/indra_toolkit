@@ -6,7 +6,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #IMGUI KIT SOURCES
 file(GLOB_RECURSE KIT_SOURCES src/*.cpp)
-file(GLOB_RECURSE KIT_HEADERS includes/*.h)
+file(GLOB_RECURSE KIT_HEADERS 
+    includes/*.h
+    src/*.h)
+    
 
 # ImGui sources (minimal set, without backends yet)
 set(IMGUI_SRC
@@ -30,6 +33,7 @@ add_library(indra_toolkit STATIC
 
 target_include_directories(indra_toolkit PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/includes
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/imgui
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/imgui/backends
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/stb

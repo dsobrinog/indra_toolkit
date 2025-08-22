@@ -17,6 +17,7 @@ namespace indra_toolkit
     {
         public:
             Layer() {};
+            Layer(std::string name, ImVec2& size, ImVec2& pos): layer_name(name), _size(size), _position(pos){};
 
             virtual void OnInit() {};
             virtual void OnEnd() {};
@@ -60,6 +61,9 @@ namespace indra_toolkit
             {
                 return AddWidget<ButtonWidget>(widget_name, text, callback);
             }
+
+
+            
 
             void SetPosition(const ImVec2& pos) { _position = pos; }
             void SetSize(const ImVec2& size) { _size = size; }

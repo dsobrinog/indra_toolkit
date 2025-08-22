@@ -3,19 +3,19 @@
 
 namespace indra_toolkit
 {
+    class ToolApplication; // Forward declared!
+
     class Module
     {
     public:
-        Module(const std::string& name) : _name(name) {}
+        Module(ToolApplication* app) : tool_app(app) {}
         virtual ~Module() = default;
 
         virtual bool OnInit() { return true; }
         virtual void OnUpdate() {}
         virtual void OnShutdown() {}
 
-        inline const std::string& GetName() const { return _name; }
-
     protected:
-        std::string _name;
+        ToolApplication* tool_app = nullptr;
     };
 }
