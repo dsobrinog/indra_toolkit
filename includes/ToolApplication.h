@@ -98,7 +98,7 @@ namespace indra_toolkit
 
         /// @brief Get size of GLFW window
         /// @return 
-        inline const ImVec2 GetSize() { return ImVec2((float)_width, (float)_height); } 
+        inline const ImVec2 GetMainWindowSize() { return ImVec2((float)_width, (float)_height); } 
 
         // --------------------------
         // NETWORK CONFIGURATION

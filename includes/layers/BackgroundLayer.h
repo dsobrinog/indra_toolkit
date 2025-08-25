@@ -9,7 +9,7 @@ namespace indra_toolkit
     class BackgroundLayer : public virtual Layer
     {
         public:
-            BackgroundLayer() : Layer() {}
+            BackgroundLayer(ToolApplication* app) : Layer(app) {}
             ~BackgroundLayer() {}
 
             virtual void OnProcess(){};
@@ -32,9 +32,8 @@ namespace indra_toolkit
 
                 ImGui::Begin("BackgroundLayer", nullptr, flags);
 
-                for (auto& pair : _widgets)
+                for (auto& w : _widgets)
                 {
-                    auto& w = pair.second;
                     if (w->IsEnabled())
                         w->OnRender();
                 }

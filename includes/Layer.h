@@ -13,10 +13,12 @@
 
 namespace indra_toolkit
 {
+    class ToolApplication;
+
     class Layer
     {
         public:
-            Layer() {};
+            Layer(ToolApplication* app): tool_app(app) {};
             Layer(std::string name, ImVec2& size, ImVec2& pos): layer_name(name), _size(size), _position(pos){};
 
             virtual void OnInit() {};
@@ -26,24 +28,38 @@ namespace indra_toolkit
             virtual void OnRender() = 0;
 
             // --------------------------
-            // API genérica (templatizada)
+            // Widget API
             // --------------------------
 
+
+            /// @brief Create a widget in the layer and returns a reference to edit.
+            /// @param widget_name Name of the widget 
+            /// @param ...args Constructor arguments
+            /// @return reference to the widget
             template<typename T, typename... Args>
-            T& AddWidget(const std::string& widget_name, Args&&... args)
+            T& CreateWidget(Args&&... args)
             {
                 static_assert(std::is_base_of<Widget, T>::value, 
-                              "T must derive from Widget");
+                    "T must derive from Widget");
+
+                static_assert(std::is_constructible<T, Args...>::value,
+                    "Layer::CreateWidget: Wrong constructor arguments for widget type T");
 
                 auto widget = std::make_unique<T>(std::forward<Args>(args)...);
                 T& ref = *widget;
-                _widgets.emplace_back(widget_name, std::move(widget));
+                _widgets.emplace_back(std::move(widget));
                 return ref;
             }
-            
-            void AddWidget(const std::string& widget_name, std::unique_ptr<Widget> widget);
-            void RemoveWidget(const std::string& name);
-            Widget* GetWidget(const std::string& name);
+
+            /// @brief Add a widget by reference (for heap allocated unique_ptr)
+            Widget& AddWidget(std::unique_ptr<Widget> widget)
+            {
+                Widget& ref = *widget;
+                _widgets.emplace_back(std::move(widget));
+                return ref;
+            }
+
+            void RemoveWidget(Widget* widget);
 
             // --------------------------
             // API específica 
@@ -59,7 +75,7 @@ namespace indra_toolkit
                                     const std::string& text, 
                                     std::function<void()> callback)
             {
-                return AddWidget<ButtonWidget>(widget_name, text, callback);
+                return CreateWidget<ButtonWidget>(text, callback);
             }
 
 
@@ -72,8 +88,10 @@ namespace indra_toolkit
             inline const std::string& GetName() { return layer_name; }
 
         protected:
+            ToolApplication* tool_app = nullptr;
+
             // Ordered storage of widgets
-            std::vector<std::pair<std::string, std::unique_ptr<Widget>>> _widgets;
+            std::vector<std::unique_ptr<Widget>> _widgets;
 
             int next_id = 0;
             std::string layer_name = { "Default Layer" };

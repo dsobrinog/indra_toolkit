@@ -124,7 +124,6 @@ void ToolApplication::Update()
     for (auto& layer :_layers)
     {
         // std::cout << "Rendering layer at: " << layer->GetName() << std::endl;
-        layer->SetSize(GetSize());
         layer->OnRender();
     }
         

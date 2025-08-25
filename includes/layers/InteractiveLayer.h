@@ -9,13 +9,16 @@ namespace indra_toolkit
     class InteractiveLayer : public Layer
     {
         public:
-            InteractiveLayer() : Layer() {}
+            InteractiveLayer(ToolApplication* app) : Layer(app) {}
             InteractiveLayer(std::string& layer_name, ImVec2& size, ImVec2& pos, ImVec4& color, ImGuiWindowFlags flags) : Layer(layer_name, size, pos){}
             ~InteractiveLayer() {}
 
             virtual void OnProcess(){};
             virtual void OnRender()
             { 
+                // Full GLFW window (TO DO: editable)
+                SetSize(tool_app->GetMainWindowSize());
+
                 // Set a window that covers the entire viewport
                 ImGui::SetNextWindowPos(_position);
                 ImGui::SetNextWindowSize(_size);
@@ -28,9 +31,8 @@ namespace indra_toolkit
 
                 ImGui::Begin(layer_name.c_str(), nullptr, flags);
 
-                for (auto& pair : _widgets)
+                for (auto& w : _widgets)
                 {
-                    auto& w = pair.second;
                     if (w->IsEnabled())
                         w->OnRender();
                 }
