@@ -51,4 +51,5 @@ target_link_libraries(indra_toolkit
     Xrandr
     Xxf86vm
     Xcursor
+    PkgConfig::RPC
 )
