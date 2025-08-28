@@ -1,19 +1,26 @@
 #include "ToolApplication.h"
 
+#include <execinfo.h>  // For backtrace
+#include <unistd.h>    // For STDERR_FILENO
+
 #include <algorithm>
 
-
+#include <comms/RpcClient.h>
 
 using namespace indra_toolkit;
 
 // Initialization
 
 indra_toolkit::ToolApplication::ToolApplication(const std::string& appname): _appname(appname)
-{ }
+{ 
+    SetupSignalHandlers();
+}
 
 indra_toolkit::ToolApplication::ToolApplication(const std::string& name, int width, int height)
 : _appname(name), _width(width), _height(height) 
-{ }
+{ 
+    SetupSignalHandlers();
+}
 
 
 bool ToolApplication::Initialize()
@@ -42,6 +49,20 @@ bool ToolApplication::Initialize()
 
     app_state = ApplicationState::ACTIVE;
     return true;
+}
+
+std::unique_ptr<indra_toolkit::IClient> indra_toolkit::ToolApplication::CreateClient(const NetworkConfiguration& config)
+{
+    switch (config.lib)
+    {
+    case RPC:
+        return std::make_unique<indra_toolkit::RpcClient>(config);
+    case ZMQ:
+        std::cerr << "Not implemented" << std::endl;
+        return nullptr;
+    default:
+        return nullptr;
+    }
 }
 
 bool ToolApplication::InitGLFW()
@@ -88,7 +109,7 @@ bool ToolApplication::InitImGui()
     return true;
 }
 
-bool indra_toolkit::ToolApplication::InitCommsWorker()
+bool ToolApplication::InitCommsWorker()
 {
     channel = DataChannel();
     worker_comms = new WorkerThread(&channel);
@@ -164,6 +185,45 @@ void ToolApplication::Shutdown()
     glfwTerminate();
 }
 
+void indra_toolkit::ToolApplication::SetupSignalHandlers()
+{
+    signal(SIGSEGV, ToolApplication::SignalHandler);  // Segmentation fault
+    signal(SIGABRT, ToolApplication::SignalHandler);  // Abort signal
+    signal(SIGFPE, ToolApplication::SignalHandler);   // Floating point exception
+    signal(SIGILL, ToolApplication::SignalHandler);   // Illegal instruction
+    
+    std::cout << "Signal handlers installed for crash detection\n";
+}
+
+void indra_toolkit::ToolApplication::SignalHandler(int sig)
+{
+    void* array[20];  // Increased stack trace depth
+    size_t size;
+
+    // Get void*'s for all entries on the stack
+    size = backtrace(array, 20);
+
+    // Print out the stack trace
+    std::cerr << "\n=== SEGMENTATION FAULT DETECTED ===\n";
+    std::cerr << "Error: signal " << sig << " (";
+    
+    switch(sig) {
+        case SIGSEGV: std::cerr << "SIGSEGV - Segmentation Fault"; break;
+        case SIGABRT: std::cerr << "SIGABRT - Abort Signal"; break;
+        case SIGFPE: std::cerr << "SIGFPE - Floating Point Exception"; break;
+        case SIGILL: std::cerr << "SIGILL - Illegal Instruction"; break;
+        default: std::cerr << "Unknown Signal"; break;
+    }
+    
+    std::cerr << ")\n";
+    std::cerr << "Stack trace:\n";
+    
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+    std::cerr << "===================================\n";
+    
+    // Exit gracefully
+    exit(1);
+}
 
 // Layers
 Layer* ToolApplication::RegisterLayer(Layer* layer)

@@ -7,7 +7,10 @@
 
 #include "Module.h"
 #include "Layer.h"
+#include "comms/IClient.h"
 
+
+#include "comms/comms_def.h"
 #include "comms/WorkerThread.h"
 #include "comms/DataChannel.h"
 
@@ -17,12 +20,6 @@
 
 namespace indra_toolkit
 {
-    struct NetworkConfiguration
-    {
-        std::string ip = "127.0.0.1";
-        std::string port = "5556";
-    };
-
     enum ApplicationState
     {
         NONE = 0,
@@ -30,8 +27,6 @@ namespace indra_toolkit
         ACTIVE = 2,
         CLOSE = 3
     };
-
-    struct st_proc_info;
 
     class ToolApplication
     {
@@ -45,11 +40,13 @@ namespace indra_toolkit
         // --------------------------
 
         bool Initialize();
+
         void Update();
+
         void Shutdown(); 
         
-        virtual void OnInit() {};
-        virtual void OnEnd() {};
+        virtual void OnInit() = 0;
+        virtual void OnEnd() = 0;
 
         bool IsActive();
         void QuitApplication();
@@ -58,10 +55,9 @@ namespace indra_toolkit
         // ENVIRONMENT
         // --------------------------
         
-        inline int GetExecutivePID(){ return executivePid; }
-        inline void SetExecutivePID(int pid){ executivePid = pid; }
+        inline const int GetExecutivePID(){ return executive_pid; }
+        inline void SetExecutivePID(int pid){ executive_pid = pid; }
   
-
         // --------------------------
         // LAYER MANAGEMENT
         // --------------------------
@@ -101,21 +97,31 @@ namespace indra_toolkit
         inline const ImVec2 GetMainWindowSize() { return ImVec2((float)_width, (float)_height); } 
 
         // --------------------------
-        // NETWORK CONFIGURATION
+        // COMMS CONFIGURATION
         // --------------------------
+
+        std::unique_ptr<IClient> client;
+        std::unique_ptr<indra_toolkit::IClient> CreateClient(const NetworkConfiguration& config);
 
         /// @brief Set IP and port configuration for networking
         /// @param config 
         inline void SetNetworkConfiguration(NetworkConfiguration& config){ network_config = config; }
         inline const std::string& GetIP(){ return network_config.ip; }
         inline const std::string& GetPort(){ return network_config.port; }
-
+    
+    protected:
+        NetworkConfiguration network_config;
 
     private:
+        // Initialization
         bool InitGLFW();
         bool InitOpenGL();
         bool InitImGui();
         bool InitCommsWorker();
+
+        // Signals catching
+        void SetupSignalHandlers();
+        static void SignalHandler(int sig);
 
         std::vector<std::unique_ptr<Layer>> _layers;
         std::vector<Module*> _modules;
@@ -124,11 +130,10 @@ namespace indra_toolkit
 
         GLFWwindow* _window = nullptr;
         std::string _appname = "Default App";
+        int executive_pid = -1;
+
 
         ApplicationState app_state = NONE;
-        int executivePid = -1;
-
-        NetworkConfiguration network_config;
 
         // glfw window size
         int _width = 685;

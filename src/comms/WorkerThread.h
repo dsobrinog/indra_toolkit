@@ -9,13 +9,15 @@ namespace indra_toolkit
 {
     class WorkerThread
     {
+    protected:
+    
         std::thread worker;
         DataChannel* channel;
         bool running;
 
         int frecuency = 10; // Miliseconds to fetch and send data
 
-        public:
+    public:
             WorkerThread(DataChannel* ch) : channel(ch) {}
 
         void Start()
