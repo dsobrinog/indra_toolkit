@@ -2,6 +2,7 @@
 
 #include "Widget.h"
 #include <vector>
+#include <string>
 #include <imgui.h>
 #include <algorithm>
 
@@ -11,7 +12,10 @@ namespace indra_toolkit
     {
         std::vector<Widget*> m_Children;
         float m_Height = 0;
+        std::string m_TableName;
     public:
+        
+        HorizontalTable(std::string TableName, float Height) : m_TableName(TableName), m_Height(Height) {}
 
         void AddChild(Widget* child) { m_Children.push_back(child); }
         void RemoveChild(Widget* child)
@@ -29,9 +33,14 @@ namespace indra_toolkit
         {
             int n = static_cast<int>(m_Children.size());
             if (n == 0) return;
+            
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+            ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.5f, 0.5f, 0.5f, 1.0f)); // child background
+
+            // ImGui::BeginChild("TableBg", ImVec2(0, m_Height), false); // 'false' = no border
 
             // Begin a table with one row, n columns
-            if (ImGui::BeginTable("HorizontalContainerTable", n, ImGuiTableFlags_SizingStretchProp))
+            if (ImGui::BeginTable(m_TableName.c_str(), n, ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_RowBg))
             {
                 ImGui::TableNextRow();
 
@@ -43,6 +52,10 @@ namespace indra_toolkit
 
                 ImGui::EndTable();
             }
+
+            // ImGui::EndChild();
+            ImGui::PopStyleColor();
+            ImGui::PopStyleVar();
         }
     };
 }
