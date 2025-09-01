@@ -6,6 +6,8 @@
 #include <algorithm>
 
 #include <comms/RpcClient.h>
+#include <Utils.h>
+
 
 using namespace indra_toolkit;
 
@@ -22,6 +24,11 @@ indra_toolkit::ToolApplication::ToolApplication(const std::string& name, int wid
     SetupSignalHandlers();
 }
 
+indra_toolkit::ToolApplication::ToolApplication(const std::string& name, int width, int height, int minAllowedWidth, int minAllowedHeight)
+: _appname(name), _width(width), _height(height), _minWidth(minAllowedWidth), _minHeight(minAllowedHeight)
+{ 
+    SetupSignalHandlers();
+}
 
 bool ToolApplication::Initialize()
 {
@@ -73,6 +80,7 @@ bool ToolApplication::InitGLFW()
 
     _window = glfwCreateWindow(_width, _height, _appname.c_str(), NULL, NULL);
     if (!_window) return false;
+
     glfwMakeContextCurrent(_window);           
     glfwSwapInterval(1);    // V Sync
 
@@ -86,10 +94,28 @@ bool ToolApplication::InitGLFW()
 void ToolApplication::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     auto* app = static_cast<ToolApplication*>(glfwGetWindowUserPointer(window));
+
+    if(width <= app->_minWidth) width = app->_minWidth;
+
     app->_width = width;
+
+    if(height <= app->_minHeight) height = app->_minHeight;
+
     app->_height = height;
 
     std::cout << "W: " << width << "H: "  << height << std::endl;
+
+    glViewport(0, 0, app->_width, app->_height);
+}
+
+void ToolApplication::SetWindowSize(const int inWidth, const int inHeight)
+{
+    glfwSetWindowSize(_window, inWidth, inHeight);
+}
+
+void ToolApplication::ClampOSWindowResize(bool state)
+{
+    _clampOSWindowResize = state;
 }
 
 bool ToolApplication::InitImGui()
@@ -141,6 +167,16 @@ void ToolApplication::Update()
         layer->OnProcess();
     }
     
+    int display_w, display_h;
+    glfwGetFramebufferSize(_window, &display_w, &display_h);
+    int desiredWidth = clamp(display_w, _minWidth, _width);
+    int desiredHeight = clamp(display_h, _minHeight, _height);
+
+    if(_clampOSWindowResize && (display_w < _minWidth || display_h < _minHeight))
+        glfwSetWindowSize(_window, desiredWidth, desiredHeight); 
+
+    glViewport(0, 0, desiredWidth, desiredHeight);
+
     // Render view
     for (auto& layer :_layers)
     {
@@ -152,17 +188,14 @@ void ToolApplication::Update()
     // Render OpenGL
     ImGui::Render();
     
-    int display_w, display_h;
-    glfwGetFramebufferSize(_window, &display_w, &display_h);
-    glViewport(0, 0, display_w, display_h);
+    // int display_w, display_h;
+    // glfwGetFramebufferSize(_window, &display_w, &display_h);
+    // glViewport(0, 0, display_w, display_h);
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     
     glfwSwapBuffers(_window);
-
-    ImGuiIO& io = ImGui::GetIO();
-    //std::cout << "FPS: " << io.Framerate << std::endl;
 }
 
 bool indra_toolkit::ToolApplication::IsActive()
@@ -173,6 +206,12 @@ bool indra_toolkit::ToolApplication::IsActive()
 void indra_toolkit::ToolApplication::QuitApplication()
 {
     app_state = ApplicationState::CLOSE;
+}
+
+void indra_toolkit::ToolApplication::ChangeAppTitle(const std::string& appName)
+{
+    _appname = appName;
+    glfwSetWindowTitle(_window, _appname.c_str());
 }
 
 void ToolApplication::Shutdown()

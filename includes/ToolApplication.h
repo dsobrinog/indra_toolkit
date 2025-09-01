@@ -34,6 +34,7 @@ namespace indra_toolkit
         ToolApplication();
         ToolApplication(const std::string& appname);
         ToolApplication(const std::string& appname, int width, int height);
+        ToolApplication(const std::string& appname, int width, int height, int minAllowedWidth, int minAllowedHeight);
 
         // --------------------------
         // LIFE CYCLE
@@ -50,6 +51,10 @@ namespace indra_toolkit
 
         bool IsActive();
         void QuitApplication();
+
+        void ChangeAppTitle(const std::string& appName);
+        void SetWindowSize(const int inWidth, const int inHeight);
+        void ClampOSWindowResize(bool state);
 
         // --------------------------
         // ENVIRONMENT
@@ -138,6 +143,11 @@ namespace indra_toolkit
         // glfw window size
         int _width = 685;
         int _height = 315;
+
+        int _minWidth = 685;
+        int _minHeight = 315;
+
+        bool _clampOSWindowResize = false;
 
         // glfw resize callback
         static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);

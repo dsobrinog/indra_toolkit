@@ -13,6 +13,7 @@ namespace indra_toolkit
         friend class Layer;
 
         public:
+            virtual ~Widget() {}
             virtual void OnProcessData() {};
             virtual void OnRender() = 0;
 
