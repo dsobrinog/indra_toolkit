@@ -1,6 +1,6 @@
-#include "Layer.h"
+#include "indra_toolkit/Layer.h"
+#include "indra_toolkit/ToolApplication.h"
 
-#include "ToolApplication.h"
 #include <algorithm>
 
 using namespace indra_toolkit;

@@ -1,4 +1,4 @@
-#include "widgets/ProgressBarWidget.h"
+#include "indra_toolkit/widgets/ProgressBarWidget.h"
 
 indra_toolkit::ProgressBarWidget::ProgressBarWidget(float f, const std::string& overlay)
     : fraction(f), overlayText(overlay)

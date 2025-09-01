@@ -1,4 +1,4 @@
-#include "widgets/ImageWidget.h"
+#include "indra_toolkit/widgets/ImageWidget.h"
 
 void indra_toolkit::ImageWidget::OnRender()
 {

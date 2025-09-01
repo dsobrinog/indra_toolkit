@@ -1,12 +1,13 @@
-#include "ToolApplication.h"
+#include "indra_toolkit/ToolApplication.h"
 
 #include <execinfo.h>  // For backtrace
 #include <unistd.h>    // For STDERR_FILENO
 
 #include <algorithm>
 
-#include <comms/RpcClient.h>
-#include <Utils.h>
+#include "comms/WorkerThread.h"
+#include <comms/clients/RpcClient.h>
+#include <indra_toolkit/Utils.h>
 
 
 using namespace indra_toolkit;
@@ -30,6 +31,11 @@ indra_toolkit::ToolApplication::ToolApplication(const std::string& name, int wid
     SetupSignalHandlers();
 }
 
+indra_toolkit::ToolApplication::~ToolApplication()
+{
+  
+}
+
 bool ToolApplication::Initialize()
 {
     app_state = ApplicationState::INIT;
@@ -50,13 +56,31 @@ bool ToolApplication::Initialize()
         return false;
     } 
 
-    InitCommsWorker();
-
     OnInit();
-
     app_state = ApplicationState::ACTIVE;
     return true;
 }
+
+bool ToolApplication::OpenCommsThread(std::unique_ptr<IWorkerTask> workerTask)
+{
+    // Validate input
+    if (!workerTask) {
+        throw std::runtime_error("Communications task cannot be null");
+    }
+
+    try {
+        worker_comms = std::make_unique<WorkerThread>(std::move(workerTask));
+        worker_comms->Start();
+        
+        std::cout << "Initialized Comms Worker" << std::endl;
+        return true;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Failed to open comms thread: " << e.what() << std::endl;
+        throw;
+    }   
+}
+
 
 std::unique_ptr<indra_toolkit::IClient> indra_toolkit::ToolApplication::CreateClient(const NetworkConfiguration& config)
 {
@@ -87,6 +111,14 @@ bool ToolApplication::InitGLFW()
     glfwSetWindowUserPointer(_window, this);
     glfwSetFramebufferSizeCallback(_window, FramebufferSizeCallback);   // Resize Callback
 
+    // DPI scaling
+    glfwSetWindowContentScaleCallback(_window, [](GLFWwindow* window, float xscale, float yscale) {
+        auto* app = static_cast<ToolApplication*>(glfwGetWindowUserPointer(window));
+        ImGuiIO& io = ImGui::GetIO();
+        io.DisplayFramebufferScale = ImVec2(xscale, yscale);
+        std::cout << "DPI Scale changed: " << xscale << "x" << yscale << std::endl;
+    });
+
     std::cout << "Initialize GLFW" << std::endl;
     return true;
 }
@@ -95,17 +127,18 @@ void ToolApplication::FramebufferSizeCallback(GLFWwindow* window, int width, int
 {
     auto* app = static_cast<ToolApplication*>(glfwGetWindowUserPointer(window));
 
-    if(width <= app->_minWidth) width = app->_minWidth;
-
+    width = std::max(width, app->_minWidth);
+    height = std::max(height, app->_minHeight);
+    
     app->_width = width;
-
-    if(height <= app->_minHeight) height = app->_minHeight;
-
     app->_height = height;
 
-    std::cout << "W: " << width << "H: "  << height << std::endl;
-
-    glViewport(0, 0, app->_width, app->_height);
+    glViewport(0, 0, width, height);
+    
+    // Forzar update de escala
+    float xscale, yscale;
+    glfwGetWindowContentScale(window, &xscale, &yscale);
+    ImGui::GetIO().DisplayFramebufferScale = ImVec2(xscale, yscale);
 }
 
 void ToolApplication::SetWindowSize(const int inWidth, const int inHeight)
@@ -124,6 +157,12 @@ bool ToolApplication::InitImGui()
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
 
+    io.MouseDrawCursor = false;
+
+    float xscale, yscale;
+    glfwGetWindowContentScale(_window, &xscale, &yscale);
+    io.DisplayFramebufferScale = ImVec2(xscale, yscale);
+
     // Apply configuration flags
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -135,14 +174,7 @@ bool ToolApplication::InitImGui()
     return true;
 }
 
-bool ToolApplication::InitCommsWorker()
-{
-    channel = DataChannel();
-    worker_comms = new WorkerThread(&channel);
-    worker_comms->Start();
-    std::cout << "Initialize Comms Worker" << std::endl;
-    return true;
-}
+
 
 bool ToolApplication::InitOpenGL()
 {
@@ -216,6 +248,9 @@ void indra_toolkit::ToolApplication::ChangeAppTitle(const std::string& appName)
 
 void ToolApplication::Shutdown()
 {
+    if(worker_comms)
+        worker_comms->Stop();
+
     OnEnd();
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();

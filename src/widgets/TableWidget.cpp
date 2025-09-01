@@ -1,4 +1,4 @@
-#include "widgets/TableWidget.h"
+#include "indra_toolkit/widgets/TableWidget.h"
 
 
 

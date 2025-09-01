@@ -1,4 +1,4 @@
-#include "Widget.h"
+#include "indra_toolkit/Widget.h"
 
 void indra_toolkit::Widget::Enable()
 {

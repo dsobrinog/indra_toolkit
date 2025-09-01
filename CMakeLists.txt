@@ -31,12 +31,17 @@ add_library(indra_toolkit STATIC
     ${IMGUI_SRC}
 )
 
+# External use - only expose the includes/indra_toolkit directory
 target_include_directories(indra_toolkit PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/includes
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/imgui
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/imgui/backends
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/stb
+)
+
+# internal use only
+target_include_directories(indra_toolkit PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 target_sources(indra_toolkit PRIVATE ${IMGUI_BACKEND_SRC})
