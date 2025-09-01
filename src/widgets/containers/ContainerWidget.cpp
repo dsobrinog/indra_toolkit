@@ -1,4 +1,4 @@
-#include "containers/ContainerWidget.h"
+#include "indra_toolkit/widgets/containers/ContainerWidget.h"
 
 namespace indra_toolkit
 {

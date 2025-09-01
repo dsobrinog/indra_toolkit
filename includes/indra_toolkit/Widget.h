@@ -65,7 +65,7 @@ namespace indra_toolkit
             int unique_identifier = -1;
             bool enable = true;
             std::string layer_name = {"Default Layer"};
-            std::string widget_name = {""}; //For debug purposes mostly, I wanna know which widget is which
+            std::string widget_name = {"Default Name"}; //For debug purposes mostly, I wanna know which widget is which
 
             PositionVars m_posVars;
             ContainerWidget* m_Container = nullptr;  //The widget that contains this widget. Null for root widgets
