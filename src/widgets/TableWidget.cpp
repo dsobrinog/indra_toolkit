@@ -13,7 +13,7 @@ void indra_toolkit::TableWidget::OnProcessData()
 {
 }
 
-void indra_toolkit::TableWidget::OnRender() 
+void indra_toolkit::TableWidget::Draw() 
 {
     if (ImGui::BeginTable("MiTabla", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
     {

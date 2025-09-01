@@ -8,7 +8,7 @@ namespace indra_toolkit
     public:
         CheckboxWidget(const std::string& label, bool initialValue);
 
-        virtual void OnRender() override;
+        virtual void Draw() override;
 
         bool GetValue() const { return value; }
 

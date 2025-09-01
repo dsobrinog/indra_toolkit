@@ -17,7 +17,7 @@ namespace indra_toolkit
         // Called when you want to close from code (alternative to user clicking)
         void Close() { ImGui::CloseCurrentPopup(); }
 
-        void OnRender() override
+        void Draw() override
         {
             // Set desired size and position before opening
             ImGui::SetNextWindowSize(ImVec2(150, 50), ImGuiCond_None);

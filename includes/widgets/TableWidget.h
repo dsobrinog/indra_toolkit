@@ -12,7 +12,7 @@ namespace indra_toolkit
             virtual ~TableWidget(); 
 
             virtual void OnProcessData() override;
-            virtual void OnRender() override;
+            virtual void Draw() override;
         protected:
             std::string table_name;
             int col_num, row_num;

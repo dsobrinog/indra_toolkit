@@ -40,7 +40,7 @@ namespace indra_toolkit
         void SetSize(const ImVec2 size) {m_Size = size; }
 
         virtual void OnProcessData(){};
-        virtual void OnRender() override {
+        virtual void Draw() override {
             // ImGui::LabelText(m_Text.c_str(), "lorem ipsum");
 
             ImGui::TextUnformatted(GetText().c_str());

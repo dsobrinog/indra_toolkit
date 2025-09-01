@@ -8,7 +8,7 @@ void indra_toolkit::ProgressBarWidget::OnProcessData()
 {
 }
 
-void indra_toolkit::ProgressBarWidget::OnRender()
+void indra_toolkit::ProgressBarWidget::Draw()
 {
     ImGui::ProgressBar(fraction, ImVec2(-1.0f, 0.0f), overlayText.c_str());
 }

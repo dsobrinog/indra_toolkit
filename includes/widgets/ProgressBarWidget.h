@@ -9,7 +9,7 @@ namespace indra_toolkit
         ProgressBarWidget(float fraction, const std::string& overlay = "");
 
         virtual void OnProcessData() override;
-        virtual void OnRender() override;
+        virtual void Draw() override;
         void SetFraction(float f) { fraction = f; }
 
     private:

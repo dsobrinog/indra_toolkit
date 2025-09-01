@@ -2,6 +2,7 @@
 
 #include "imgui.h"
 #include "Widget.h"
+#include <functional>
 
 namespace indra_toolkit
 {
@@ -14,12 +15,12 @@ namespace indra_toolkit
 
         virtual void OnRender() override
         {
-            if (!enable || texture == nullptr) return;
+            if (!enable || texture == ImTextureID_Invalid) return;
 
-            if (ImGui::ImageButton(texture, size, uv0, uv1))
-            {
-                if (onClick) onClick();
-            }
+            // if (ImGui::ImageButton(texture, size, uv0, uv1))
+            // {
+            //     if (onClick) onClick();
+            // }
         }
 
         void SetTexture(ImTextureID tex) { texture = tex; }

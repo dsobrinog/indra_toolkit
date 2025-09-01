@@ -9,7 +9,7 @@ namespace indra_toolkit
     public:
         VerticalSpacer(float height) : _height(height) {}
 
-        virtual void OnRender() override 
+        virtual void Draw() override 
         {
             ImGui::Dummy(ImVec2(0.0f, _height)); // Empty space
         }
@@ -21,7 +21,7 @@ namespace indra_toolkit
     class SeparatorWidget : public Widget
     {
     public:
-        virtual void OnRender() override 
+        virtual void Draw() override 
         {
             ImGui::Separator();
         }
@@ -32,7 +32,7 @@ namespace indra_toolkit
     public:
         SpacerWidget(int times):spaces(times){}
 
-        virtual void OnRender() override 
+        virtual void Draw() override 
         {
             for (size_t i = 0; i < spaces; i++)
             {

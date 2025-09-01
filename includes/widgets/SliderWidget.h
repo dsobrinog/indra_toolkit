@@ -9,7 +9,7 @@ namespace indra_toolkit
         SliderWidget(const std::string& label, float minValue, float maxValue, float initialValue);
 
         virtual void OnProcessData() override;
-        virtual void OnRender() override;
+        virtual void Draw() override;
 
         float GetValue() const { return value; }
 

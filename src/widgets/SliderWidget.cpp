@@ -11,7 +11,7 @@ void indra_toolkit::SliderWidget::OnProcessData()
     
 }
 
-void indra_toolkit::SliderWidget::OnRender() 
+void indra_toolkit::SliderWidget::Draw() 
 {
     ImGui::SliderFloat(label.c_str(), &value, minValue, maxValue);
     

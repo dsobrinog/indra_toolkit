@@ -25,8 +25,9 @@ namespace indra_toolkit
 
         virtual void OnProcessData() override {}
 
-        virtual void OnRender() override
+        virtual void Draw() override
         {
+            ImGui::BeginChild(GetWidgetName().c_str(), GetPixelSize());
             for (size_t i = 0; i < m_Children.size(); ++i)
             {
                 if (m_Children[i])
@@ -40,6 +41,7 @@ namespace indra_toolkit
                     RemoveChild(m_Children[i]);
                 }
             }
+            ImGui::EndChild();
         }
 
     };

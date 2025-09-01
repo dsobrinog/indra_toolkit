@@ -15,10 +15,10 @@ namespace indra_toolkit
             : m_Label(label), m_Callback(callback) {}
 
         virtual void OnProcessData() override {};
-        virtual void OnRender() override;
+        virtual void Draw() override;
 
         // Setters for customization
-        ButtonWidget& SetSize(const ImVec2& size) { m_Size = size; return *this; }
+        // ButtonWidget& SetSize(const ImVec2& size) { m_Size = size; return *this; }
         ButtonWidget& SetBgColor(const ImVec4& color) { m_BgColor = color; return *this; }
         ButtonWidget& SetTextColor(const ImVec4& color) { m_TextColor = color; return *this; }
         ButtonWidget& SetFlags(int flags) { m_Flags = flags; return *this; }

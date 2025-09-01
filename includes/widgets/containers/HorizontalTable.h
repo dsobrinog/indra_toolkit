@@ -11,11 +11,10 @@ namespace indra_toolkit
     class HorizontalTable : public Widget
     {
         std::vector<Widget*> m_Children;
-        float m_Height = 0;
         std::string m_TableName;
     public:
         
-        HorizontalTable(std::string TableName, float Height) : m_TableName(TableName), m_Height(Height) {}
+        HorizontalTable(std::string TableName, float Height) : m_TableName(TableName) { SetSize({0.f, Height}); }
 
         void AddChild(Widget* child) { m_Children.push_back(child); }
         void RemoveChild(Widget* child)
@@ -29,7 +28,7 @@ namespace indra_toolkit
 
         virtual void OnProcessData() override {}
 
-        virtual void OnRender() override
+        virtual void Draw() override
         {
             int n = static_cast<int>(m_Children.size());
             if (n == 0) return;
@@ -40,7 +39,7 @@ namespace indra_toolkit
             // ImGui::BeginChild("TableBg", ImVec2(0, m_Height), false); // 'false' = no border
 
             // Begin a table with one row, n columns
-            if (ImGui::BeginTable(m_TableName.c_str(), n, ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_RowBg))
+            if (ImGui::BeginTable(m_TableName.c_str(), n, ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_RowBg, GetPixelSize()))
             {
                 ImGui::TableNextRow();
 

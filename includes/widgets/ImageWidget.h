@@ -2,6 +2,11 @@
 
 #include "imgui.h"
 #include "Widget.h"
+#include <string>
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+#include <GLFW/glfw3.h>
 
 namespace indra_toolkit
 {
@@ -9,16 +14,16 @@ namespace indra_toolkit
     class ImageWidget : public Widget
     {
     public:
-        ImageWidget(ImTextureID* texture, const ImVec2& size)
-            : texture(texture), size(size) {}
+        ImageWidget(const std::string& pathToImage, const ImVec2& size);
+        virtual ~ImageWidget();
 
-        virtual void OnRender() override;
+        virtual void Draw() override;
 
-        void SetTexture(ImTextureID* tex) { texture = tex; }
-        void SetSize(const ImVec2& newSize) { size = newSize; }
+    protected:
+        GLuint LoadTextureFromFile(const std::string& pathToImage, int* out_width, int* out_height);
+        GLuint LoadTextureFromXPMFile(const std::string& pathToImage, int* out_width, int* out_height);
 
     private:
-        ImTextureID* texture;
-        ImVec2 size;
+        GLuint textureID;
     };
 }

@@ -5,7 +5,7 @@ indra_toolkit::CheckboxWidget::CheckboxWidget(const std::string& label, bool ini
     : label(label), value(initialValue)
 {}
 
-void indra_toolkit::CheckboxWidget::OnRender()
+void indra_toolkit::CheckboxWidget::Draw()
 {
     ImGui::Checkbox(label.c_str(), &value);
 }

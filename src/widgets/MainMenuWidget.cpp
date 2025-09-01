@@ -4,7 +4,7 @@ void indra_toolkit::MainMenuBarWidget::OnProcessData()
 {
 }
 
-void indra_toolkit::MainMenuBarWidget::OnRender()
+void indra_toolkit::MainMenuBarWidget::Draw()
 {
     if(m_windowPadding.x != -1 || m_windowPadding.y != -1) ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, m_windowPadding); 
 

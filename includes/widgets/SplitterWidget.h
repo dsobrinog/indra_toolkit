@@ -19,7 +19,7 @@ namespace indra_toolkit
             delete m_BottomItem;
         };
 
-        virtual void OnRender() override 
+        virtual void Draw() override 
         {
             // Draw top child
             ImGui::BeginChild("TopRegion", ImVec2(0, m_TopHeight), true);

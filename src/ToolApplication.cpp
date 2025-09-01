@@ -54,6 +54,9 @@ bool ToolApplication::Initialize()
 
     OnInit();
 
+    GLFWcursor* cursor = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+    glfwSetCursor(_window, cursor);
+
     app_state = ApplicationState::ACTIVE;
     return true;
 }
@@ -128,8 +131,8 @@ bool ToolApplication::InitImGui()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
-  
-
+    io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
     ImGui::StyleColorsDark();
     std::cout << "Initialize ImGui" << std::endl;
     return true;

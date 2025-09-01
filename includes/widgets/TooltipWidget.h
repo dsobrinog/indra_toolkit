@@ -28,10 +28,10 @@ namespace indra_toolkit
 
         // Enable dynamic text provider
         void SetDynamicTextProvider(std::function<std::string()> provider) { text_provider = provider; }
-
-        void OnRender() override
+        
+        void Draw() override
         {
-            if (!enable)
+            if (!IsEnabled())
                 return;
 
             // If hovering, show tooltip

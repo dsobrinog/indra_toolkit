@@ -51,7 +51,7 @@ namespace indra_toolkit
             m_TextWidget.OnProcessData();
         }
 
-        virtual void OnRender() override 
+        virtual void Draw() override 
         {
             ImVec2 pos = ImGui::GetCursorScreenPos();
             ImDrawList* draw_list = ImGui::GetWindowDrawList();

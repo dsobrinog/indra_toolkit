@@ -7,6 +7,6 @@ namespace indra_toolkit
     class DemoWidget : public Widget
     {
             virtual void OnProcessData() override;
-            virtual void OnRender() override;
+            virtual void Draw() override;
     };
 }

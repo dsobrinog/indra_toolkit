@@ -25,7 +25,7 @@ namespace indra_toolkit
     {
         public:
             virtual void OnProcessData() override;
-            virtual void OnRender() override;
+            virtual void Draw() override;
 
             // Añadir submenu
             void AddMenu(const MenuElement& menu);
