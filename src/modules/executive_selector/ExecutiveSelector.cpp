@@ -1,5 +1,5 @@
-#include "ExecutiveSelector.h"
-#include "ToolApplication.h"
+#include "indra_toolkit/modules/ExecutiveSelector.h"
+#include "indra_toolkit/ToolApplication.h"
 
 #include <dirent.h>
 #include <fstream>

@@ -2,67 +2,29 @@
 
 #include <thread>
 #include <chrono>
-
-#include <comms/DataChannel.h>
+#include <atomic>
+#include <memory>
 
 namespace indra_toolkit
 {
+    // Forward declaration
+    class IWorkerTask;
+
     class WorkerThread
     {
-    protected:
-    
-        std::thread worker;
-        DataChannel* channel;
-        bool running;
-
-        int frecuency = 10; // Miliseconds to fetch and send data
-
     public:
-            WorkerThread(DataChannel* ch) : channel(ch) {}
+        WorkerThread(std::unique_ptr<IWorkerTask> task, int frequencyMs = 10);
+        ~WorkerThread();
 
-        void Start()
-        {
-            running = true;
-            worker = std::thread([this]()
-            {
-                this->Run();
-            });
-        }
+        void Start();
+        void Stop();
 
-        void Stop()
-        {
-            running = false;
-            if (worker.joinable()) worker.join();
-        }
+    private:
+        void Run();
 
-        void Run()
-        {
-            using namespace std::chrono;
-
-            const milliseconds interval(frecuency); // X milliseconds between iterations
-            while (running)
-            {
-                auto startTime = steady_clock::now();
-
-                // --- RECEIVE DATA FROM SERVER ---
-                SharedData data;
-                data.message = "Message received from Executive!";
-                data.value = -1;
-                channel->SetData(data);
-
-                // --- SEND DATA TO SERVER ---
-                SharedData current = channel->GetData();
-                // std::cout << "[Worker] Sending value: " << current.value
-                //         << " msg: " << current.message << std::endl;
-
-                // --- Limit frequency ---
-                auto endTime = steady_clock::now();
-                auto elapsed = duration_cast<milliseconds>(endTime - startTime);
-                if (elapsed < interval)
-                {
-                    std::this_thread::sleep_for(interval - elapsed);
-                }
-            }
-        }
+        std::thread worker;
+        std::atomic<bool> running;
+        int frequency;
+        std::unique_ptr<IWorkerTask> task_;
     };
-};
+}

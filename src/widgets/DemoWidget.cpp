@@ -1,4 +1,4 @@
-#include "widgets/DemoWidget.h"
+#include "indra_toolkit/widgets/DemoWidget.h"
 
 
 void indra_toolkit::DemoWidget::OnProcessData()

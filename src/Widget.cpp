@@ -1,5 +1,5 @@
-#include "Widget.h"
-#include "widgets/containers/ContainerWidget.h"
+#include "indra_toolkit/Widget.h"
+#include "indra_toolkit/widgets/containers/ContainerWidget.h"
 
 void indra_toolkit::Widget::OnRender()
 {

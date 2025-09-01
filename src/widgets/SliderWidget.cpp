@@ -1,4 +1,4 @@
-#include "widgets/SliderWidget.h"
+#include "indra_toolkit/widgets/SliderWidget.h"
 
 indra_toolkit::SliderWidget::SliderWidget(const std::string & _label, float _minValue, float _maxValue, float _initialValue)
 : label(_label), minValue(_minValue), maxValue(_maxValue), value(_initialValue)

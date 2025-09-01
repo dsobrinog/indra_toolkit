@@ -1,4 +1,4 @@
-#include "widgets/CheckboxWidget.h"
+#include "indra_toolkit/widgets/CheckboxWidget.h"
 
 
 indra_toolkit::CheckboxWidget::CheckboxWidget(const std::string& label, bool initialValue)
