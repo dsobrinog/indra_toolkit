@@ -1,7 +1,6 @@
 #pragma once
 
 #include "indra_toolkit/widgets/containers/ContainerWidget.h"
-#include "indra_toolkit/widgets/containers/HorizontalContainer.h"
 
 namespace indra_toolkit
 {

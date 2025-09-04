@@ -2,6 +2,8 @@
 
 #include <string>
 
+
+
 enum COMMS_LIB
 {
     RPC,
@@ -21,3 +23,4 @@ struct NetworkConfiguration
     std::string protocol   = "udp"; // "udp" or "tcp"
     COMMS_LIB lib = RPC;
 };
+

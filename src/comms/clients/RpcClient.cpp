@@ -39,8 +39,8 @@ bool RpcClient::Connect()
     else
     {
         std::cout << "\n **** Created Simulation Virtual Console (" << config_.name_app << ") version "
-                    << config_.versionNumber
-                    << " in server " << config_.ip
+                    << config_.versionNumber << " (Executive Num: " << config_.versionNumber 
+                    << ") in server " << config_.ip
                     << " ****" << std::endl;
 
         std::cout << ">>> " << config_.name_app << ", pid: " << getpid()
@@ -62,10 +62,16 @@ void RpcClient::Disconnect()
 
 char* indra_toolkit::RpcClient::Read(const char* arg1)
 {
-    return *(leo_1(arg1, clnt));
+    if (!clnt) return nullptr;
+    char **res = leo_1(arg1, clnt);
+    if (!res || !*res) return nullptr;
+    return strdup(*res); // caller must free()
+
+    // return *(leo_1(arg1, clnt));
 }
 
 void indra_toolkit::RpcClient::Write(char* arg1, const char* arg2)
 {
     escribo_1(arg1, arg2, clnt);
 }
+

@@ -62,7 +62,7 @@ bool ToolApplication::Initialize()
     return true;
 }
 
-bool ToolApplication::OpenCommsThread(std::unique_ptr<IWorkerTask> workerTask)
+bool ToolApplication::OpenCommsThread(std::unique_ptr<IWorkerTaskBase> workerTask)
 {
     // Validate input
     if (!workerTask) {

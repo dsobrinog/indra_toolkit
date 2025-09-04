@@ -46,7 +46,7 @@ namespace indra_toolkit
         // --------------------------
 
         bool Initialize();
-        bool OpenCommsThread(std::unique_ptr<IWorkerTask> workerTask);
+        bool OpenCommsThread(std::unique_ptr<IWorkerTaskBase> workerTask);
 
         void Update();
 
@@ -143,7 +143,7 @@ namespace indra_toolkit
         std::vector<std::unique_ptr<Layer>> _layers;
         std::vector<Module*> _modules;
         std::unique_ptr<WorkerThread> worker_comms;
-        std::unique_ptr<IWorkerTask> comms_task;
+        std::unique_ptr<IWorkerTaskBase> comms_task;
 
 
         GLFWwindow* _window = nullptr;

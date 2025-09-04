@@ -5,7 +5,7 @@
 
 namespace indra_toolkit
 {
-    WorkerThread::WorkerThread(std::unique_ptr<IWorkerTask> task, int frequencyMs)
+    WorkerThread::WorkerThread(std::unique_ptr<IWorkerTaskBase> task, int frequencyMs)
         : task_(std::move(task)),
           frequency(frequencyMs),
           running(false)
