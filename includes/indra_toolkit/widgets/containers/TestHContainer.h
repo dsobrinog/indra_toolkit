@@ -8,7 +8,7 @@
 
 namespace indra_toolkit
 {
-    class HorizontalContainer : public ContainerWidget
+    class TestHContainer : public ContainerWidget
     {
     public:
 
@@ -16,8 +16,8 @@ namespace indra_toolkit
 
         virtual void Draw() override
         {
-            ImGui::BeginChild(GetWidgetName().c_str(), GetPixelSize(), ImGuiChildFlags_AutoResizeY);
-
+            // ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+            
             for (size_t i = 0; i < m_Children.size(); ++i)
             {
                 if (m_Children[i])
@@ -31,8 +31,8 @@ namespace indra_toolkit
                     RemoveChild(m_Children[i]);
                 }
             }
-            
-            ImGui::EndChild();
+
+            // ImGui::PopStyleVar();
         }
     };
 }

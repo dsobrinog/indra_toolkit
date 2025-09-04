@@ -216,11 +216,13 @@ void ToolApplication::Update()
         // std::cout << "Rendering layer at: " << layer->GetName() << std::endl;
         layer->OnRender();
     }
-        
+    
+    ImGui::ShowMetricsWindow();
+    ImGui::ShowStyleEditor();
 
     // Render OpenGL
     ImGui::Render();
-    
+
     // int display_w, display_h;
     // glfwGetFramebufferSize(_window, &display_w, &display_h);
     // glViewport(0, 0, display_w, display_h);

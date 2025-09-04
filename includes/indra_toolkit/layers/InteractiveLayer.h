@@ -56,7 +56,7 @@ namespace indra_toolkit
                                             ImGuiWindowFlags_NoTitleBar 
                                           | ImGuiWindowFlags_NoResize 
                                           | ImGuiWindowFlags_NoMove 
-                                        //   | ImGuiWindowFlags_NoCollapse 
+                                          | ImGuiWindowFlags_NoCollapse 
                                           | ImGuiWindowFlags_NoBringToFrontOnFocus;
     };
 }
