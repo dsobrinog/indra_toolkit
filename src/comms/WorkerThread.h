@@ -8,12 +8,12 @@
 namespace indra_toolkit
 {
     // Forward declaration
-    class IWorkerTask;
+    class IWorkerTaskBase;
 
     class WorkerThread
     {
     public:
-        WorkerThread(std::unique_ptr<IWorkerTask> task, int frequencyMs = 10);
+        WorkerThread(std::unique_ptr<IWorkerTaskBase> task, int frequencyMs = 10);
         ~WorkerThread();
 
         void Start();
@@ -25,6 +25,6 @@ namespace indra_toolkit
         std::thread worker;
         std::atomic<bool> running;
         int frequency;
-        std::unique_ptr<IWorkerTask> task_;
+        std::unique_ptr<IWorkerTaskBase> task_;
     };
 }

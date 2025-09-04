@@ -1,33 +1,52 @@
 #pragma once
 
-#include "indra_toolkit/comms/ICommand.h"
+#include "indra_toolkit/comms/ICommander.h"
 #include "indra_toolkit/comms/IClient.h"
+
 #include <vector>
 #include <memory>
+#include <iostream>
+
 
 namespace indra_toolkit
 {
-    class IWorkerTask
+    /// @brief Type-erased base class
+    class IWorkerTaskBase
+    {
+    public:
+        virtual ~IWorkerTaskBase() = default;
+
+        virtual void Initialize() = 0;
+        virtual void Tick() = 0;
+        virtual void ProcessCommands() = 0;
+    };
+
+    /// @brief Templated worker task 
+    /// @tparam CommandEnum custom command enum
+    template<typename CommandEnum>
+    class IWorkerTask : public IWorkerTaskBase
     {
     public:
         IWorkerTask(IClient* client) 
-            : _client(client) {};
+            : _client(client) { };
+
         virtual ~IWorkerTask() = default;
 
+        virtual void Initialize() = 0;
         virtual void Tick() = 0;
 
         inline void ProcessCommands()
         {
-            for(auto& c : commands_)
-                c->ExecuteCommand();
+            _commander.ProcessCommands();
         }
 
-        inline void AddCommand(std::unique_ptr<ICommand> command) {
-            commands_.push_back(std::move(command));
+        inline void EnqueueCommand(CommandEnum cmd)
+        {
+            _commander.Enqueue(cmd);
         }
 
     protected:
-        std::vector<std::unique_ptr<ICommand>> commands_;
         IClient* _client = nullptr;
+        ICommander<CommandEnum> _commander;
     };
 }

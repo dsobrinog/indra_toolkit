@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Widget.h"
+#include "indra_toolkit/Widget.h"
 
 namespace indra_toolkit
 {
