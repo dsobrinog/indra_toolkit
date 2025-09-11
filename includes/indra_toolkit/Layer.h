@@ -4,6 +4,7 @@
 
 #include "Widget.h"
 #include "indra_toolkit/widgets/ButtonWidget.h"
+#include "indra_toolkit/ToolApplication.h"
 
 #include <vector>
 #include <memory>
@@ -13,14 +14,17 @@
 
 namespace indra_toolkit
 {
-    class ToolApplication;
 
     class Layer
     {
         public:
             Layer(ToolApplication* app): tool_app(app) {};
             Layer(std::string name, ImVec2& size, ImVec2& pos): layer_name(name), _size(size), _position(pos){};
-
+            virtual ~Layer()
+            {
+                std::cout << "layer: " << layer_name << " is being destroyed" << std::endl;
+            }
+            
             virtual void OnInit() {};
             virtual void OnEnd() {};
 
@@ -77,9 +81,6 @@ namespace indra_toolkit
             {
                 return CreateWidget<ButtonWidget>(text, callback);
             }
-
-
-            
 
             void SetPosition(const ImVec2& pos) { _position = pos; }
             void SetSize(const ImVec2& size) { _size = size; }

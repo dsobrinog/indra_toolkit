@@ -14,6 +14,9 @@ namespace indra_toolkit
         ButtonWidget(const std::string& label, std::function<void()> callback)
             : m_Label(label), m_Callback(callback) {}
 
+        ButtonWidget(const std::string& label, std::function<void()> callback, const PositionVars& posVars, const std::string& widgetName)
+            : m_Label(label), m_Callback(callback), Widget(posVars, widgetName) {}
+
         virtual void OnProcessData() override {};
         virtual void Draw() override;
 

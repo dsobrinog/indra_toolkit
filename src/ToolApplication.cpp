@@ -14,19 +14,19 @@ using namespace indra_toolkit;
 
 // Initialization
 
-indra_toolkit::ToolApplication::ToolApplication(const std::string& appname): _appname(appname)
+indra_toolkit::ToolApplication::ToolApplication(const std::string& app_name_): app_name(app_name_)
 { 
     SetupSignalHandlers();
 }
 
-indra_toolkit::ToolApplication::ToolApplication(const std::string& name, int width, int height)
-: _appname(name), _width(width), _height(height) 
+indra_toolkit::ToolApplication::ToolApplication(const std::string& app_name_, int width_, int height_)
+: app_name(app_name_), wnd_width(width_), wnd_height(height_) 
 { 
     SetupSignalHandlers();
 }
 
-indra_toolkit::ToolApplication::ToolApplication(const std::string& name, int width, int height, int minAllowedWidth, int minAllowedHeight)
-: _appname(name), _width(width), _height(height), _minWidth(minAllowedWidth), _minHeight(minAllowedHeight)
+indra_toolkit::ToolApplication::ToolApplication(const std::string& app_name_, int width_, int height_, int min_allowed_width_, int min_allowed_height_)
+: app_name(app_name_), wnd_width(width_), wnd_height(height_), wnd_min_width(min_allowed_width_), wnd_min_height(min_allowed_height_)
 { 
     SetupSignalHandlers();
 }
@@ -56,21 +56,28 @@ bool ToolApplication::Initialize()
         return false;
     } 
 
+    //Inicializacion de modulos
+    if(!InitModules())
+    {
+        std::cout << "Initializing Modules Failed! " << std::endl;
+        return false;
+    }
+
     OnInit();
 
     app_state = ApplicationState::ACTIVE;
     return true;
 }
 
-bool ToolApplication::OpenCommsThread(std::unique_ptr<IWorkerTaskBase> workerTask)
+bool ToolApplication::OpenCommsThread(std::unique_ptr<IWorkerTaskBase> worker_task_)
 {
     // Validate input
-    if (!workerTask) {
+    if (!worker_task_) {
         throw std::runtime_error("Communications task cannot be null");
     }
 
     try {
-        worker_comms = std::make_unique<WorkerThread>(std::move(workerTask));
+        worker_comms = std::make_unique<WorkerThread>(std::move(worker_task_));
         worker_comms->Start();
         
         std::cout << "Initialized Comms Worker" << std::endl;
@@ -82,13 +89,12 @@ bool ToolApplication::OpenCommsThread(std::unique_ptr<IWorkerTaskBase> workerTas
     }   
 }
 
-
-std::unique_ptr<indra_toolkit::IClient> indra_toolkit::ToolApplication::CreateClient(const NetworkConfiguration& config)
+std::unique_ptr<indra_toolkit::IClient> indra_toolkit::ToolApplication::CreateClient(const NetworkConfiguration& config_)
 {
-    switch (config.lib)
+    switch (config_.lib)
     {
     case RPC:
-        return std::make_unique<indra_toolkit::RpcClient>(config);
+        return std::make_unique<indra_toolkit::RpcClient>(config_);
     case ZMQ:
         std::cerr << "Not implemented" << std::endl;
         return nullptr;
@@ -103,17 +109,17 @@ bool ToolApplication::InitGLFW()
         return false;
     }
 
-    _window = glfwCreateWindow(_width, _height, _appname.c_str(), NULL, NULL);
-    if (!_window) return false;
+    window = glfwCreateWindow(wnd_width, wnd_height, app_name.c_str(), NULL, NULL);
+    if (!window) return false;
 
-    glfwMakeContextCurrent(_window);           
+    glfwMakeContextCurrent(window);           
     glfwSwapInterval(1);    // V Sync
 
-    glfwSetWindowUserPointer(_window, this);
-    glfwSetFramebufferSizeCallback(_window, FramebufferSizeCallback);   // Resize Callback
+    glfwSetWindowUserPointer(window, this);
+    glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);   // Resize Callback
 
     // DPI scaling
-    glfwSetWindowContentScaleCallback(_window, [](GLFWwindow* window, float xscale, float yscale) {
+    glfwSetWindowContentScaleCallback(window, [](GLFWwindow* window, float xscale, float yscale) {
         auto* app = static_cast<ToolApplication*>(glfwGetWindowUserPointer(window));
         ImGuiIO& io = ImGui::GetIO();
         io.DisplayFramebufferScale = ImVec2(xscale, yscale);
@@ -124,32 +130,38 @@ bool ToolApplication::InitGLFW()
     return true;
 }
 
-void ToolApplication::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
+void ToolApplication::FramebufferSizeCallback(GLFWwindow* window_, int width_, int height_)
 {
-    auto* app = static_cast<ToolApplication*>(glfwGetWindowUserPointer(window));
+    auto* app = static_cast<ToolApplication*>(glfwGetWindowUserPointer(window_));
 
-    width = std::max(width, app->_minWidth);
-    height = std::max(height, app->_minHeight);
+    width_ = std::max(width_, app->wnd_min_width);
+    height_ = std::max(height_, app->wnd_min_height);
     
-    app->_width = width;
-    app->_height = height;
+    app->wnd_width = width_;
+    app->wnd_height = height_;
 
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, width_, height_);
     
     // Forzar update de escala
     float xscale, yscale;
-    glfwGetWindowContentScale(window, &xscale, &yscale);
+    glfwGetWindowContentScale(window_, &xscale, &yscale);
     ImGui::GetIO().DisplayFramebufferScale = ImVec2(xscale, yscale);
 }
 
-void ToolApplication::SetWindowSize(const int inWidth, const int inHeight)
+void ToolApplication::SetWindowSize(const int in_width_, const int in_height_)
 {
-    glfwSetWindowSize(_window, inWidth, inHeight);
+    glfwSetWindowSize(window, in_width_, in_height_);
 }
 
-void ToolApplication::ClampOSWindowResize(bool state)
+void ToolApplication::SetMinWindowSize(const int in_min_width_, const int in_min_height_)
 {
-    _clampOSWindowResize = state;
+    wnd_min_width = in_min_width_;
+    wnd_min_height = in_min_height_;
+}
+
+void ToolApplication::ClampOSWindowResize(bool state_)
+{
+    clamp_OS_Window_Resize = state_;
 }
 
 bool ToolApplication::InitImGui()
@@ -161,7 +173,7 @@ bool ToolApplication::InitImGui()
     io.MouseDrawCursor = false;
 
     float xscale, yscale;
-    glfwGetWindowContentScale(_window, &xscale, &yscale);
+    glfwGetWindowContentScale(window, &xscale, &yscale);
     io.DisplayFramebufferScale = ImVec2(xscale, yscale);
 
     // Apply configuration flags
@@ -175,13 +187,23 @@ bool ToolApplication::InitImGui()
     return true;
 }
 
-
-
 bool ToolApplication::InitOpenGL()
 {
-    bool success = ImGui_ImplGlfw_InitForOpenGL(_window, true) && ImGui_ImplOpenGL3_Init("#version 330");
+    bool success = ImGui_ImplGlfw_InitForOpenGL(window, true) && ImGui_ImplOpenGL3_Init("#version 330");
     std::cout << "Initialize OpenGL" << std::endl;
     return success;
+}
+
+bool ToolApplication::InitModules()
+{
+    bool initAllModules = true;
+    for (auto& module : module_map)
+    {
+        if(!module.second->OnInit())
+            initAllModules = false;
+    }
+
+    return initAllModules;
 }
 
 // Update
@@ -189,53 +211,66 @@ void ToolApplication::Update()
 {
     glfwPollEvents();
 
+    for(auto& module : module_map)
+    {
+        module.second->OnUpdate();
+    }
+
     // New Frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
     // Process data from layers
-    for (auto& layer :_layers){
+    for (auto& layer :layers){
         // std::cout << "Process layer at: " << layer->GetName() << std::endl;
         layer->OnProcess();
     }
     
     int display_w, display_h;
-    glfwGetFramebufferSize(_window, &display_w, &display_h);
-    int desiredWidth = clamp(display_w, _minWidth, _width);
-    int desiredHeight = clamp(display_h, _minHeight, _height);
+    glfwGetFramebufferSize(window, &display_w, &display_h);
+    int desiredWidth = clamp(display_w, wnd_min_width, wnd_width);
+    int desiredHeight = clamp(display_h, wnd_min_height, wnd_height);
 
-    if(_clampOSWindowResize && (display_w < _minWidth || display_h < _minHeight))
-        glfwSetWindowSize(_window, desiredWidth, desiredHeight); 
+    if(clamp_OS_Window_Resize && (display_w < wnd_min_width || display_h < wnd_min_height))
+        glfwSetWindowSize(window, desiredWidth, desiredHeight); 
 
     glViewport(0, 0, desiredWidth, desiredHeight);
 
     // Render view
-    for (auto& layer :_layers)
+    for (auto& layer :layers)
     {
-        // std::cout << "Rendering layer at: " << layer->GetName() << std::endl;
         layer->OnRender();
     }
+
+    for(Layer* layerToRemove : layers_to_remove)
+    {
+        auto it = std::find_if(layers.begin(), layers.end(),
+            [layerToRemove](const std::unique_ptr<Layer>& l) { return l.get() == layerToRemove; });
+
+        if (it != layers.end())
+        {
+            layers.erase(it); // erases and destroys the layer
+        }
+    }
+    layers_to_remove.clear();
     
-    ImGui::ShowMetricsWindow();
-    ImGui::ShowStyleEditor();
+    // ImGui::ShowMetricsWindow();
+    // ImGui::ShowStyleEditor();
 
     // Render OpenGL
     ImGui::Render();
 
-    // int display_w, display_h;
-    // glfwGetFramebufferSize(_window, &display_w, &display_h);
-    // glViewport(0, 0, display_w, display_h);
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     
-    glfwSwapBuffers(_window);
+    glfwSwapBuffers(window);
 }
 
 bool indra_toolkit::ToolApplication::IsActive()
 {
-    return app_state != ApplicationState::ACTIVE || !glfwWindowShouldClose(_window);
+    return app_state != ApplicationState::ACTIVE || !glfwWindowShouldClose(window);
 }
 
 void indra_toolkit::ToolApplication::QuitApplication()
@@ -243,10 +278,10 @@ void indra_toolkit::ToolApplication::QuitApplication()
     app_state = ApplicationState::CLOSE;
 }
 
-void indra_toolkit::ToolApplication::ChangeAppTitle(const std::string& appName)
+void indra_toolkit::ToolApplication::ChangeAppTitle(const std::string& app_name_)
 {
-    _appname = appName;
-    glfwSetWindowTitle(_window, _appname.c_str());
+    app_name = app_name_;
+    glfwSetWindowTitle(window, app_name.c_str());
 }
 
 void ToolApplication::Shutdown()
@@ -254,11 +289,12 @@ void ToolApplication::Shutdown()
     if(worker_comms)
         worker_comms->Stop();
 
+    EndModules();
     OnEnd();
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-    glfwDestroyWindow(_window);
+    glfwDestroyWindow(window);
     glfwTerminate();
 }
 
@@ -272,7 +308,7 @@ void indra_toolkit::ToolApplication::SetupSignalHandlers()
     std::cout << "Signal handlers installed for crash detection\n";
 }
 
-void indra_toolkit::ToolApplication::SignalHandler(int sig)
+void indra_toolkit::ToolApplication::SignalHandler(int sig_)
 {
     void* array[20];  // Increased stack trace depth
     size_t size;
@@ -282,9 +318,9 @@ void indra_toolkit::ToolApplication::SignalHandler(int sig)
 
     // Print out the stack trace
     std::cerr << "\n=== SEGMENTATION FAULT DETECTED ===\n";
-    std::cerr << "Error: signal " << sig << " (";
+    std::cerr << "Error: signal " << sig_ << " (";
     
-    switch(sig) {
+    switch(sig_) {
         case SIGSEGV: std::cerr << "SIGSEGV - Segmentation Fault"; break;
         case SIGABRT: std::cerr << "SIGABRT - Abort Signal"; break;
         case SIGFPE: std::cerr << "SIGFPE - Floating Point Exception"; break;
@@ -302,35 +338,17 @@ void indra_toolkit::ToolApplication::SignalHandler(int sig)
     exit(1);
 }
 
-// Layers
-Layer* ToolApplication::RegisterLayer(Layer* layer)
+void ToolApplication::UnregisterLayer(Layer* layer_)
 {
-    _layers.push_back(std::unique_ptr<Layer>(layer));
-    return layer; // non-owning pointer
+    layers_to_remove.push_back(layer_); 
 }
 
-void ToolApplication::UnregisterLayer(Layer* layer)
+void ToolApplication::EndModules()
 {
-    auto it = std::find_if(_layers.begin(), _layers.end(),
-        [layer](const std::unique_ptr<Layer>& l) { return l.get() == layer; });
-
-    if (it != _layers.end())
+    for (auto& module : module_map)
     {
-        _layers.erase(it); // erases and destroys the layer
+        module.second->OnShutdown();
     }
-}
 
-
-// Modules
-void ToolApplication::RegisterModule(Module* module)
-{
-    if (module->OnInit())
-    {
-        _modules.push_back(module);
-    }
-}
-
-Module* indra_toolkit::ToolApplication::GetModuleByName(const std::string& module_name)
-{
-    return nullptr;
+    module_map.clear();
 }

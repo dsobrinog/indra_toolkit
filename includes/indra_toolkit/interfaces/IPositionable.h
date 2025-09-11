@@ -77,6 +77,7 @@ struct PositionVars
     ImVec2 MaxSize;
     ImVec2 PixelSize;
     UIBehaviourMode SizeMode;
+    
 
     ImVec2 Position;
     UIBehaviourMode PosMode;

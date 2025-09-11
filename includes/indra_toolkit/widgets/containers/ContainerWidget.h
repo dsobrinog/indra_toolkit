@@ -13,6 +13,9 @@ namespace indra_toolkit
     class ContainerWidget : public Widget
     {
     public:
+
+        using Widget::Widget;
+
         virtual ~ContainerWidget()
         {
             for (Widget* child : m_Children)
@@ -43,9 +46,12 @@ namespace indra_toolkit
         //returns index of the child with the name passed. If not found it returns -1
         int GetIndexOfChild(const std::string& ChildName);
 
-        ImVec2 GetItemPadding();
+        ImVec2 GetItemPadding() const;
         void SetItemPadding(ImVec2 InPadding) { m_ItemPadding = InPadding; } 
         ImVec2 GetAllPaddingBetweenItems();
+
+        ImVec2 GetWindowPadding() const { return m_WindowPadding; }
+        void SetWindowPadding(ImVec2 InWindowPadding) { m_WindowPadding = InWindowPadding; }
 
         void SetBackgroundColor(ImVec4 bgColor) { m_bgColor = bgColor; }
         ImVec4 GetBackgroundColor() const { return m_bgColor; }
@@ -53,10 +59,14 @@ namespace indra_toolkit
         virtual ImVec2 GetSize() const override;
         virtual ImVec2 GetPixelSize() const override;
 
+        virtual void BeginStyle() override;
+        virtual void EndStyle() override;
+
     protected:
         std::vector<Widget*> m_Children;
 
-        ImVec2 m_ItemPadding = { -1, -1 };          //Padding between the elements of the container (if its (-1, -1), we use ImGuiStyle ItemSpacing)     
+        ImVec2 m_ItemPadding = { -1, -1 };          //Padding between the elements of the container (if its (-1, -1), we use ImGuiStyle ItemSpacing) 
+        ImVec2 m_WindowPadding = { -1, -1};   
         ImVec4 m_bgColor = { 0.f, 0.f, 0.f, 0.f };  
     };
 }

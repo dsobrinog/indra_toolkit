@@ -5,12 +5,11 @@
 
 void indra_toolkit::Widget::OnRender()
 {
-    ApplyLayout();
-    //Apply Style
+    ApplyLayout(); //Pick size and position
+
     BeginStyle();
     Draw();
     EndStyle();
-    //Pop Style
 
     if (ImGui::IsItemHovered())
     {
@@ -24,16 +23,6 @@ void indra_toolkit::Widget::OnRender()
 
         ImGui::EndTooltip();
     }
-}
-
-void indra_toolkit::Widget::BeginStyle()
-{
-    
-}
-
-void indra_toolkit::Widget::EndStyle()
-{
-
 }
 
 void indra_toolkit::Widget::Enable()

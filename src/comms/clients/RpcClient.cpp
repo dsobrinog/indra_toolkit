@@ -64,10 +64,13 @@ char* indra_toolkit::RpcClient::Read(const char* arg1)
 {
     if (!clnt) return nullptr;
     char **res = leo_1(arg1, clnt);
-    if (!res || !*res) return nullptr;
-    return strdup(*res); // caller must free()
 
-    // return *(leo_1(arg1, clnt));
+
+
+    // if (!res || !*res) return nullptr;
+    // return strdup(*res); // caller must free()
+
+    return *(leo_1(arg1, clnt));
 }
 
 void indra_toolkit::RpcClient::Write(char* arg1, const char* arg2)

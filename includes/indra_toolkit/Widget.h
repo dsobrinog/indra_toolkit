@@ -2,6 +2,7 @@
 
 #include "imgui.h"
 #include <string>
+#include <iostream>
 #include "interfaces/IPositionable.h"
 
 namespace indra_toolkit
@@ -12,7 +13,8 @@ namespace indra_toolkit
     enum class UIStyleFlags : uint32_t
     {
         None            = 0,
-        BackgroundColor = 1 << 0
+        BackgroundColor = 1 << 0,
+        Padding         = 1 << 1
     };
 
     inline UIStyleFlags operator|(UIStyleFlags a, UIStyleFlags b) 
@@ -24,18 +26,31 @@ namespace indra_toolkit
     {
         return static_cast<UIStyleFlags>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
     }
+    
+    inline bool HasFlag(UIStyleFlags value, UIStyleFlags flag)
+    {
+        return (static_cast<uint32_t>(value) & static_cast<uint32_t>(flag)) != 0;
+    }
 
     class Widget : public IPositionable
     {
         friend class Layer;
 
         public:
-            virtual ~Widget() {}
+            Widget() = default;
+            Widget(const PositionVars& posSettings, const std::string& widgetName) : m_posVars(posSettings), widget_name(widgetName) {}
+            virtual ~Widget()
+            {
+                std::cout << "Widget: " << widget_name << " is being destroyed" << std::endl;
+            }
+            
             virtual void OnProcessData() {};
             virtual void OnRender();
             virtual void Draw() = 0;
-            virtual void BeginStyle();
-            virtual void EndStyle();
+            //Here you should use the style enum flag to push the styles however you want
+            virtual void BeginStyle() {};
+            //Here you need to pop as many styles as you pushed in BeginStyle
+            virtual void EndStyle() {};
 
             void Enable();
             void Disable();
@@ -45,6 +60,9 @@ namespace indra_toolkit
             std::string GetWidgetName() const {return widget_name; }
             void SetWidgetName(const std::string& inWidgetName);
 
+            UIStyleFlags GetWidgetStyle() const { return m_style; }
+            void SetWidgetStyle(UIStyleFlags styleFlags) { m_style = styleFlags; }
+        
             ////////// Begin of IPositionable ///////////
             
             virtual ImVec2 GetPosition() const;

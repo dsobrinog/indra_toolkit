@@ -28,8 +28,7 @@ namespace indra_toolkit
                 ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, _windowPadding);   // padding?
 
                 ImGui::Begin(layer_name.c_str(), nullptr, window_flags);
-                // ImGui::Begin(layer_name.c_str(), nullptr);
-
+                
                 for (auto& w : _widgets)
                 {
                     if (w->IsEnabled())
@@ -45,7 +44,7 @@ namespace indra_toolkit
             inline void SetBackgroundColor(const ImVec4& color) { _bgColor = color; }
             inline void SetWindowRounding(float rounding) { _windowRounding = rounding; }
             inline void SetWindowPadding(const ImVec2& padding) { _windowPadding = padding; }
-            inline void SetWindowFlags(ImGuiWindowFlags& flags){ window_flags = flags; }
+            inline void SetWindowFlags(ImGuiWindowFlags flags){ window_flags = flags; }
 
         protected:
             ImVec4 _bgColor = ImVec4(0.1f, 0.1f, 0.1f, 1.f);
@@ -57,6 +56,8 @@ namespace indra_toolkit
                                           | ImGuiWindowFlags_NoResize 
                                           | ImGuiWindowFlags_NoMove 
                                           | ImGuiWindowFlags_NoCollapse 
-                                          | ImGuiWindowFlags_NoBringToFrontOnFocus;
+                                          | ImGuiWindowFlags_NoBringToFrontOnFocus
+                                          | ImGuiWindowFlags_NoScrollbar
+                                          | ImGuiWindowFlags_MenuBar;
     };
 }

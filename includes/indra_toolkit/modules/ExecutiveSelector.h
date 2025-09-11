@@ -1,32 +1,58 @@
 #pragma once
 
 #include "indra_toolkit/Module.h"
+#include "indra_toolkit/layers/InteractiveLayer.h"
 
 #include <vector>
+#include <functional>
 
-#pragma once
+namespace indra_toolkit
+{
+    class ComboBoxWidget;
+}
 
 namespace indra_toolkit
 {
     struct st_proc_info;
 
+
     /// @brief Get PIDs of running executives in the same machine
     class ExecutiveSelector : public Module
     {
     public:
-        ExecutiveSelector(ToolApplication* app) : Module(app){}
+        ExecutiveSelector(ToolApplication* app_, const ToolModules& moduleIdentity_) : Module(app_, moduleIdentity_){}
+
+        virtual bool OnInit() override;
+
+        virtual void OnShutdown() override;
 
         /// @brief Retrieve a list with the PIDs of the current running Executives in this machine
         /// @return list of executive running PIDs
         std::vector<int> GetRunningExecutives();
 
+        void SetOnExecutiveSelectedCallback(std::function<void(int)> callback_) { on_exec_selected = callback_; }
+        void SetSelectorWindowName(const std::string& in_name_of_window_) { name_of_selector_window = in_name_of_window_;}
+
     private:
+
+        void CreateExecutiveComboBox(const std::vector<int>& runningExecutivesIDs); 
+
+        void OnConfirmButtonPressed();
+
         #if defined(unix) || defined(__unix__) || defined(__unix)
 
         std::vector<st_proc_info> ReadRunningExecutivesProc();
         st_proc_info ReadProcInfo(std::string path);
 
         #endif
+
+        InteractiveLayer* interactive_layer = nullptr;
+        ComboBoxWidget* combo_box = nullptr;
+
+        ImVec2 original_wnd_size;
+
+        std::function<void(int)> on_exec_selected;
+        std::string name_of_selector_window;
     };
 
      // Process linux data

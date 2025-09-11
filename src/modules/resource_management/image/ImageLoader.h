@@ -19,7 +19,7 @@ namespace indra_toolkit
     class ImageLoader : public Module
     {
     public:
-        ImageLoader(ToolApplication* app) : Module(app) {}
+        ImageLoader(ToolApplication* app, const ToolModules& module_identity) : Module(app, module_identity) {}
         ~ImageLoader() { OnShutdown(); }
 
             

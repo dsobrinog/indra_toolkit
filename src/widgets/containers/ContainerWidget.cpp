@@ -1,5 +1,6 @@
 #include "indra_toolkit/widgets/containers/ContainerWidget.h"
 
+
 namespace indra_toolkit
 {
     int ContainerWidget::GetIndexOfChild(const std::string& ChildName)
@@ -15,7 +16,7 @@ namespace indra_toolkit
         return -1;
     }
 
-    ImVec2 ContainerWidget::GetItemPadding()
+    ImVec2 ContainerWidget::GetItemPadding() const
     {
         ImVec2 ItemPadding;
         ImGuiStyle& style = ImGui::GetStyle();
@@ -47,6 +48,30 @@ namespace indra_toolkit
         else return m_posVars.PixelSize;
     }
 
+    void ContainerWidget::BeginStyle()
+    {
+        if(HasFlag(m_style, UIStyleFlags::BackgroundColor))
+        {
+            ImGui::PushStyleColor(ImGuiCol_ChildBg, m_bgColor);
+        }
+
+        if(HasFlag(m_style, UIStyleFlags::Padding))
+        {
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, m_WindowPadding);
+        }
+    }
+
+    void ContainerWidget::EndStyle()
+    {
+        if(HasFlag(m_style, UIStyleFlags::BackgroundColor))
+        {
+            ImGui::PopStyleColor();
+        }
+
+        if(HasFlag(m_style, UIStyleFlags::Padding))
+        {
+            ImGui::PopStyleVar();
+        }
+    }
+
 } // namespace indra_toolkit
-
-

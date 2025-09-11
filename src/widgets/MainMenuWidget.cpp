@@ -8,12 +8,12 @@ void indra_toolkit::MainMenuBarWidget::Draw()
 {
     if(m_windowPadding.x != -1 || m_windowPadding.y != -1) ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, m_windowPadding); 
 
-    if (ImGui::BeginMainMenuBar())
+    if (ImGui::BeginMenuBar())
     {
         for (const auto& menu : menus)
             RenderMenuElement(menu);
 
-        ImGui::EndMainMenuBar();
+        ImGui::EndMenuBar();
     }
 
     if(m_windowPadding.x != -1 || m_windowPadding.y != -1) ImGui::PopStyleVar();

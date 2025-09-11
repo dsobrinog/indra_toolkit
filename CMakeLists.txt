@@ -27,7 +27,7 @@ set(IMGUI_BACKEND_SRC
 
 add_library(indra_toolkit STATIC
     ${KIT_SOURCES}
-    ${KIT_HEADERS}
+    #${KIT_HEADERS}
     ${IMGUI_SRC}
 )
 
