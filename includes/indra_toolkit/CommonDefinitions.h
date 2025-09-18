@@ -5,7 +5,8 @@ namespace indra_toolkit
     enum class ToolModules
     {
         None                            = 0,
-        ExecutiveSelector               = 1
+        ExecutiveSelector               = 1,
+        FileExplorer                    = 2
     };
 
 }

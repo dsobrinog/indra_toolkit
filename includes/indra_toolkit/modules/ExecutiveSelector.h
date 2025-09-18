@@ -26,6 +26,8 @@ namespace indra_toolkit
 
         virtual void OnShutdown() override;
 
+        virtual bool IsDeferred() const { return false; }
+
         /// @brief Retrieve a list with the PIDs of the current running Executives in this machine
         /// @return list of executive running PIDs
         std::vector<int> GetRunningExecutives();

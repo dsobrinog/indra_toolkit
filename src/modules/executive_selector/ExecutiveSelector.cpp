@@ -12,16 +12,16 @@ namespace indra_toolkit
 {
     bool ExecutiveSelector::OnInit()
     {
-        tool_app->ChangeAppTitle(name_of_selector_window);
         original_wnd_size = tool_app->GetMainWindowSize(); 
-        tool_app->SetMinWindowSize(400, 60);
-        tool_app->SetWindowSize(400, 60);
-
         int numOfExec = GetRunningExecutives().size();
         if(numOfExec <= 1)
         {
-             return true;
+            return true;
         }
+
+        tool_app->ChangeAppTitle(name_of_selector_window);
+        tool_app->SetMinWindowSize(400, 60);
+        tool_app->SetWindowSize(400, 60);
 
         interactive_layer = tool_app->RegisterLayerPtr<indra_toolkit::InteractiveLayer>(tool_app);
         const ImVec4 interactive_bg(1.f, 0.3f, 0.3f, 1.f);

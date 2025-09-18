@@ -31,6 +31,9 @@ namespace indra_toolkit
             virtual void OnProcess() = 0;
             virtual void OnRender() = 0;
 
+            bool IsEnabled() const { return enabled; }
+            void SetEnabled(bool state_) { enabled = state_; }
+
             // --------------------------
             // Widget API
             // --------------------------
@@ -69,19 +72,6 @@ namespace indra_toolkit
             // API específica 
             // --------------------------
 
-
-            /// @brief Crea y añade un botón a la layer.
-            /// @param widget_name 
-            /// @param text text in the button
-            /// @param callback eventos on click
-            /// @return referencia al widget
-            ButtonWidget& AddButton(const std::string& widget_name, 
-                                    const std::string& text, 
-                                    std::function<void()> callback)
-            {
-                return CreateWidget<ButtonWidget>(text, callback);
-            }
-
             void SetPosition(const ImVec2& pos) { _position = pos; }
             void SetSize(const ImVec2& size) { _size = size; }
 
@@ -90,6 +80,7 @@ namespace indra_toolkit
 
         protected:
             ToolApplication* tool_app = nullptr;
+            bool enabled = true;
 
             // Ordered storage of widgets
             std::vector<std::unique_ptr<Widget>> _widgets;

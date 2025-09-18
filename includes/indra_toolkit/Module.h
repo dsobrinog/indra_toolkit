@@ -16,6 +16,12 @@ namespace indra_toolkit
         virtual void OnUpdate() {}
         virtual void OnShutdown() {}
 
+        //If true, means that the Initialization of the module is up to the user, 
+        //and its safe to Shutdown the module manually.
+        //The toolApplication won´t manage it for you. After being initialized, the Update
+        //will be called. When Shutdown is called for the Tool, the module shutdown will also be called
+        virtual bool IsDeferred() const = 0;
+
         ToolModules GetIdentity() const { return module_identity; }
 
     protected:

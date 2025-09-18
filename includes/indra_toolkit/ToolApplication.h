@@ -195,7 +195,14 @@ namespace indra_toolkit
         inline void SetNetworkConfiguration(NetworkConfiguration& config_){ network_config = config_; }
         inline const std::string& GetIP(){ return network_config.ip; }
         inline const std::string& GetPort(){ return network_config.port; }
-    
+        
+        // --------------------------
+        // DEBUG CONFIGURATION
+        // --------------------------
+
+        bool IsDebugEnabled() const { return draw_debug_info; }
+        void DrawDebugInfo(bool state_) { draw_debug_info = state_; }
+
     protected:
         NetworkConfiguration network_config;
 
@@ -212,6 +219,9 @@ namespace indra_toolkit
         void SetupSignalHandlers();
         static void SignalHandler(int sig_);
 
+        // glfw resize callback
+        static void FramebufferSizeCallback(GLFWwindow* window_, int width_, int height_);
+
         std::vector<std::unique_ptr<Layer>> layers;
         std::vector<Layer*> layers_to_remove;
         std::map<ToolModules, std::unique_ptr<Module>> module_map;
@@ -219,11 +229,9 @@ namespace indra_toolkit
         std::unique_ptr<WorkerThread> worker_comms;
         std::unique_ptr<IWorkerTaskBase> comms_task;
 
-
         GLFWwindow* window = nullptr;
         std::string app_name = "Default App";
         int executive_pid = -1;
-
 
         ApplicationState app_state = NONE;
 
@@ -236,9 +244,6 @@ namespace indra_toolkit
 
         bool clamp_OS_Window_Resize = false;
 
-        // glfw resize callback
-        static void FramebufferSizeCallback(GLFWwindow* window_, int width_, int height_);
+        bool draw_debug_info = false;
     };
-
-   
 }

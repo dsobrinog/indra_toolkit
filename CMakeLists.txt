@@ -42,6 +42,7 @@ target_include_directories(indra_toolkit PUBLIC
 # internal use only
 target_include_directories(indra_toolkit PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/includes
 )
 
 target_sources(indra_toolkit PRIVATE ${IMGUI_BACKEND_SRC})

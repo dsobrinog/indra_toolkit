@@ -199,9 +199,13 @@ bool ToolApplication::InitModules()
     bool initAllModules = true;
     for (auto& module : module_map)
     {
+        if(module.second->IsDeferred()) continue;
+        
         if(!module.second->OnInit())
             initAllModules = false;
     }
+
+    std::cout << "Initialize Modules" << std::endl;
 
     return initAllModules;
 }
@@ -240,7 +244,8 @@ void ToolApplication::Update()
     // Render view
     for (auto& layer :layers)
     {
-        layer->OnRender();
+        if(layer->IsEnabled())
+            layer->OnRender();
     }
 
     for(Layer* layerToRemove : layers_to_remove)
@@ -255,8 +260,11 @@ void ToolApplication::Update()
     }
     layers_to_remove.clear();
     
-    // ImGui::ShowMetricsWindow();
-    // ImGui::ShowStyleEditor();
+    if(IsDebugEnabled())
+    {
+        ImGui::ShowMetricsWindow();
+        ImGui::ShowStyleEditor();
+    }
 
     // Render OpenGL
     ImGui::Render();
@@ -281,7 +289,7 @@ void indra_toolkit::ToolApplication::QuitApplication()
 void indra_toolkit::ToolApplication::ChangeAppTitle(const std::string& app_name_)
 {
     app_name = app_name_;
-    glfwSetWindowTitle(window, app_name.c_str());
+    if(window) glfwSetWindowTitle(window, app_name.c_str());
 }
 
 void ToolApplication::Shutdown()
