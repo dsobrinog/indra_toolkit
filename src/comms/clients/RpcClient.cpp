@@ -73,7 +73,28 @@ void indra_toolkit::RpcClient::Write(char* arg1, const char* arg2)
     escribo_1(arg1, arg2, clnt);
 }
 
-void indra_toolkit::RpcClient::InitTimeExecutive()
+void* indra_toolkit::RpcClient::ListMonitorSubstringBegin(int tool_pid, char* element)
+{
+    return lista_monitor_substring_begin__1(tool_pid, element, clnt);
+}
+
+bool indra_toolkit::RpcClient::ListMonitorSubstringEnd(int tool_pid)
+{
+    return *(bool*)lista_monitor_substring_end__1(tool_pid, clnt); 
+}
+
+std::string indra_toolkit::RpcClient::ListMonitorSubstringGet(int tool_pid) 
+{
+    char** auxCad = lista_monitor_substring_get__1(tool_pid, clnt); 
+    if(!auxCad) return std::string();
+    
+    return std::string(*auxCad);
+}
+
+void* indra_toolkit::RpcClient::MonitorClose(int tool_pid)
+{
+    return monitor_close_1(tool_pid, clnt); 
+}void indra_toolkit::RpcClient::InitTimeExecutive()
 {
     inittiempoejecutivo_1(clnt);
 }

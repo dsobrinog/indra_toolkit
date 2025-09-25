@@ -14,8 +14,18 @@ namespace indra_toolkit
     {
         original_wnd_size = tool_app->GetMainWindowSize(); 
         int numOfExec = GetRunningExecutives().size();
-        if(numOfExec <= 1)
+        if(numOfExec == 1)
         {
+            int execPID = GetRunningExecutives()[0];
+            tool_app->SetExecutivePID(execPID);
+            std::string appName = tool_app->GetAppName() + " | EXEC PID: " + std::to_string(execPID);
+            tool_app->ChangeAppTitle(appName);
+            return true;
+        }
+        else if(numOfExec < 1)
+        { 
+            std::cout << "No executive is running. Comms won´t be initialized. Please re-start with a executive running." << std::endl;
+            tool_app->ChangeAppTitle(tool_app->GetAppName() + " | NO EXECUTIVE RUNNING");
             return true;
         }
 
@@ -23,6 +33,13 @@ namespace indra_toolkit
         tool_app->SetMinWindowSize(400, 60);
         tool_app->SetWindowSize(400, 60);
 
+        CreateSelectorMenu();
+
+        return true;
+    }
+
+    void ExecutiveSelector::CreateSelectorMenu()
+    {
         interactive_layer = tool_app->RegisterLayerPtr<indra_toolkit::InteractiveLayer>(tool_app);
         const ImVec4 interactive_bg(1.f, 0.3f, 0.3f, 1.f);
         interactive_layer->SetBackgroundColor(ImVec4 (0.f, 0.f, 0.f, 1.f));
@@ -72,8 +89,6 @@ namespace indra_toolkit
         confirm_button->SetBgColor(botton_background_color);
 
         horizontalContainer.AddChild(confirm_button);
-
-        return true;
     }
 
     void ExecutiveSelector::CreateExecutiveComboBox(const std::vector<int>& runningExecutivesIDs)

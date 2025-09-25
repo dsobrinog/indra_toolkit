@@ -9,11 +9,16 @@ namespace indra_toolkit
     class SplitterWidget : public ContainerWidget
     {
     public:
-        SplitterWidget() { InitTopAndBottomContainers(); }
+        SplitterWidget(Layer* owning_layer_) 
+        {
+            SetOwningLayer(owning_layer_);
+            InitTopAndBottomContainers(); 
+        }
 
-        SplitterWidget(float SplitterRatio, float SplitterThickness, float MinPanelRatio)
+        SplitterWidget(Layer* owning_layer_, float SplitterRatio, float SplitterThickness, float MinPanelRatio)
          : m_SplitterRatio(SplitterRatio), m_SplitterThickness(SplitterThickness), m_MinPanelRatio(MinPanelRatio)
         {
+            SetOwningLayer(owning_layer_);
             InitTopAndBottomContainers();
         }
 

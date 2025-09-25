@@ -5,6 +5,12 @@
 
 using namespace indra_toolkit;
 
+Layer::Layer(ToolApplication* app)
+    : tool_app(app)
+{     
+    draw_debug = tool_app->IsDebugEnabled(); 
+}
+
 void Layer::OnProcess()
 {
     for (auto& widget : _widgets)
@@ -27,6 +33,12 @@ void Layer::OnRender()
     }
     
     ImGui::End();
+}
+
+bool indra_toolkit::Layer::IsDebugEnabled() const
+{
+    bool debugEnabledInApp = tool_app->IsDebugEnabled();
+    return debugEnabledInApp && IsEnabled() && draw_debug;
 }
 
 void indra_toolkit::Layer::RemoveWidget(Widget* widget)

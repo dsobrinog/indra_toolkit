@@ -21,6 +21,10 @@ namespace indra_toolkit
         void InitTimeModules();
         std::string GetModuleName(int index);
 
+        void* ListMonitorSubstringBegin(int tool_pid, char* element) override;
+        bool ListMonitorSubstringEnd(int tool_pid) override; 
+        std::string ListMonitorSubstringGet(int tool_pid) override;
+        virtual void* MonitorClose(int tool_pid);
 
     private:
         CLIENT* clnt = nullptr; // from Sun RPC

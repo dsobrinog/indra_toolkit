@@ -37,6 +37,8 @@ namespace indra_toolkit
 
     private:
 
+        void CreateSelectorMenu();
+
         void CreateExecutiveComboBox(const std::vector<int>& runningExecutivesIDs); 
 
         void OnConfirmButtonPressed();

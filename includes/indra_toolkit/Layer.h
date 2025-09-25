@@ -4,7 +4,6 @@
 
 #include "Widget.h"
 #include "indra_toolkit/widgets/ButtonWidget.h"
-#include "indra_toolkit/ToolApplication.h"
 
 #include <vector>
 #include <memory>
@@ -15,11 +14,13 @@
 namespace indra_toolkit
 {
 
+    class ToolApplication;
+
     class Layer
     {
         public:
-            Layer(ToolApplication* app): tool_app(app) {};
-            Layer(std::string name, ImVec2& size, ImVec2& pos): layer_name(name), _size(size), _position(pos){};
+            Layer(ToolApplication* app);
+
             virtual ~Layer()
             {
                 std::cout << "layer: " << layer_name << " is being destroyed" << std::endl;
@@ -34,10 +35,12 @@ namespace indra_toolkit
             bool IsEnabled() const { return enabled; }
             void SetEnabled(bool state_) { enabled = state_; }
 
+            bool IsDebugEnabled() const;
+            void DrawDebug(bool draw_state_) { draw_debug = draw_state_; }
+
             // --------------------------
             // Widget API
             // --------------------------
-
 
             /// @brief Create a widget in the layer and returns a reference to edit.
             /// @param widget_name Name of the widget 
@@ -51,9 +54,12 @@ namespace indra_toolkit
 
                 static_assert(std::is_constructible<T, Args...>::value,
                     "Layer::CreateWidget: Wrong constructor arguments for widget type T");
-
+                    
                 auto widget = std::make_unique<T>(std::forward<Args>(args)...);
                 T& ref = *widget;
+                Widget* baseWidget = static_cast<Widget*>(widget.get());
+                baseWidget->SetOwningLayer(this);
+
                 _widgets.emplace_back(std::move(widget));
                 return ref;
             }
@@ -63,9 +69,12 @@ namespace indra_toolkit
             {
                 Widget& ref = *widget;
                 _widgets.emplace_back(std::move(widget));
+                ref.SetOwningLayer(this);
                 return ref;
             }
 
+            /// @brief Remove the widget from the layer (will delete the widget)
+            /// @param widget 
             void RemoveWidget(Widget* widget);
 
             // --------------------------
@@ -81,6 +90,7 @@ namespace indra_toolkit
         protected:
             ToolApplication* tool_app = nullptr;
             bool enabled = true;
+            bool draw_debug = false;
 
             // Ordered storage of widgets
             std::vector<std::unique_ptr<Widget>> _widgets;

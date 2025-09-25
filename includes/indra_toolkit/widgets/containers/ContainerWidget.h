@@ -30,6 +30,7 @@ namespace indra_toolkit
         {
             m_Children.push_back(child);
             child->SetContainer(this);
+            child->SetOwningLayer(GetOwningLayer());
         }
 
         void RemoveChild(Widget* child)

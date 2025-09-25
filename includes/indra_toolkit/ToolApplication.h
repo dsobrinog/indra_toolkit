@@ -179,6 +179,7 @@ namespace indra_toolkit
         inline const ImVec2 GetMainWindowSize() { return ImVec2((float)wnd_width, (float)wnd_height); } 
 
         void ChangeAppTitle(const std::string& app_name_);
+        std::string GetAppName() const { return app_name; }
         void SetWindowSize(const int in_width_, const int in_height_);
         void SetMinWindowSize(const int in_min_width_, const int in_min_height_);
         void ClampOSWindowResize(bool state_);

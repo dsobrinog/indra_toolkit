@@ -54,7 +54,7 @@ namespace indra_toolkit
 
             void Enable();
             void Disable();
-            inline bool IsEnabled() { return enable; }
+            inline bool IsEnabled() const { return enable; }
             void Destroy();
             
             std::string GetWidgetName() const {return widget_name; }
@@ -63,6 +63,12 @@ namespace indra_toolkit
             UIStyleFlags GetWidgetStyle() const { return m_style; }
             void SetWidgetStyle(UIStyleFlags styleFlags) { m_style = styleFlags; }
         
+            void SetOwningLayer(Layer* owning_layer_);
+            Layer* GetOwningLayer() const { return owning_layer; }
+            
+            bool IsDebugEnabled() const;
+            void DrawDebug(bool draw_state) { draw_debug = draw_state; }
+
             ////////// Begin of IPositionable ///////////
             
             virtual ImVec2 GetPosition() const;
@@ -124,12 +130,12 @@ namespace indra_toolkit
 
             //-----------------------------------------//
 
-            // Creador global de widgets ? Cada vez que creas un widget se asocia a un identifier global unico
-            int unique_identifier = -1;
             bool enable = true;
+            bool draw_debug = false;
             std::string layer_name = {"Default Layer"};
             std::string widget_name = {"Default Name"}; //For debug purposes mostly, I wanna know which widget is which
 
             ContainerWidget* m_Container = nullptr;  //The widget that contains this widget. Null for root widgets
+            Layer* owning_layer = nullptr;
     };
 }

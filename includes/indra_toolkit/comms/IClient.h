@@ -26,11 +26,16 @@ namespace indra_toolkit
         /// @param arg2 address
         virtual void Write(char* arg1, const char* arg2) = 0;
 
+        virtual void* ListMonitorSubstringBegin(int tool_pid, char* element) = 0;
+        virtual bool ListMonitorSubstringEnd(int tool_pid) = 0; 
+        virtual std::string ListMonitorSubstringGet(int tool_pid) = 0;
+        virtual void* MonitorClose(int tool_pid) = 0;
+
         virtual void InitTimeExecutive() = 0;
         virtual void InitTimeModules() = 0;
         virtual std::string GetModuleName(int index) = 0;
 
-     protected:
+    protected:
         NetworkConfiguration config_;
 };
 }

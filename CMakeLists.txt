@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(indra_toolkit)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #IMGUI KIT SOURCES
@@ -18,6 +18,7 @@ set(IMGUI_SRC
     thirdparty/imgui/imgui_tables.cpp
     thirdparty/imgui/imgui_widgets.cpp
     thirdparty/imgui/imgui_demo.cpp   
+    thirdparty/imgui/misc/cpp/imgui_stdlib.cpp
 )
 
 set(IMGUI_BACKEND_SRC

@@ -1,6 +1,7 @@
 #include "indra_toolkit/Widget.h"
 #include "indra_toolkit/widgets/containers/ContainerWidget.h"
 #include <indra_toolkit/Utils.h>
+#include <indra_toolkit/Layer.h>
 #include <iostream>
 
 void indra_toolkit::Widget::OnRender()
@@ -10,6 +11,8 @@ void indra_toolkit::Widget::OnRender()
     BeginStyle();
     Draw();
     EndStyle();
+
+    if(!IsDebugEnabled()) return;
 
     if (ImGui::IsItemHovered())
     {
@@ -52,6 +55,17 @@ void indra_toolkit::Widget::Destroy()
 void indra_toolkit::Widget::SetWidgetName(const std::string& inWidgetName)
 {
     widget_name = inWidgetName;
+}
+
+void indra_toolkit::Widget::SetOwningLayer(Layer* owning_layer_)
+{
+    owning_layer = owning_layer_;
+    draw_debug = owning_layer_->IsDebugEnabled();
+}
+
+bool indra_toolkit::Widget::IsDebugEnabled() const
+{
+    return owning_layer->IsDebugEnabled() && draw_debug && IsEnabled();
 }
 
 ImVec2 indra_toolkit::Widget::GetPosition() const

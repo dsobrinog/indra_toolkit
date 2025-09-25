@@ -1,8 +1,6 @@
 #pragma once
 
 #include "indra_toolkit/Layer.h"
-#include "indra_toolkit/layers/BackgroundLayer.h"
-#include "indra_toolkit/Widget.h"
 
 namespace indra_toolkit
 {
@@ -10,36 +8,10 @@ namespace indra_toolkit
     {
         public:
             InteractiveLayer(ToolApplication* app) : Layer(app) {}
-            InteractiveLayer(std::string& layer_name, ImVec2& size, ImVec2& pos, ImVec4& color, ImGuiWindowFlags flags) : Layer(layer_name, size, pos){}
             ~InteractiveLayer() {}
 
             virtual void OnProcess(){};
-            virtual void OnRender()
-            { 
-                // // Full GLFW window (TO DO: editable)
-                SetSize(tool_app->GetMainWindowSize());
-
-                // Set a window that covers the entire viewport
-                ImGui::SetNextWindowPos(_position);
-                ImGui::SetNextWindowSize(_size);
-
-                ImGui::PushStyleColor(ImGuiCol_WindowBg, _bgColor);                 // background color
-                ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, _windowRounding); // rounded corners
-                ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, _windowPadding);   // padding?
-
-                ImGui::Begin(layer_name.c_str(), nullptr, window_flags);
-                
-                for (auto& w : _widgets)
-                {
-                    if (w->IsEnabled())
-                        w->OnRender();
-                }
-
-                ImGui::End();
-
-                ImGui::PopStyleVar(2);   // pop the two style vars
-                ImGui::PopStyleColor();  // pop the window bg color
-            };
+            virtual void OnRender();
 
             inline void SetBackgroundColor(const ImVec4& color) { _bgColor = color; }
             inline void SetWindowRounding(float rounding) { _windowRounding = rounding; }

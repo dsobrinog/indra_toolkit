@@ -10,7 +10,7 @@ namespace indra_toolkit
     {
         return (v < lo) ? lo : (hi < v) ? hi : v;
     }
-
+    
     inline ImVec2 clampVec2(const ImVec2& v, const ImVec2& lo, const ImVec2& hi)
     {
         return ImVec2(

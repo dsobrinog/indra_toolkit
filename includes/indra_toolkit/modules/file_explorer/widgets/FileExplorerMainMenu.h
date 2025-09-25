@@ -11,14 +11,15 @@ namespace indra_toolkit
     class FEMainMenu : public Widget
     {
     public:
-        FEMainMenu();
+        FEMainMenu(Layer* owning_layer_);
         virtual ~FEMainMenu();
 
         virtual void Draw() override;
+        void SetOpen(bool is_open_) { is_open = is_open_; }
 
     private:
-        HorizontalContainer* MainHorizontalContainer;
-        
+        HorizontalContainer* main_horizontal_container;
+        bool is_open = true;
     };
     
 }
