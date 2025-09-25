@@ -27,9 +27,12 @@ namespace indra_toolkit
             {
                 if (m_Children[i])
                 {
-                    m_Children[i]->OnRender();
-                    if (i + 1 < m_Children.size())
+                    if (m_Children[i]->IsEnabled())
+                    {
+                        m_Children[i]->OnRender();
+                        if (i + 1 < m_Children.size())
                         ImGui::SameLine();
+                    }
                 }
                 else
                 {

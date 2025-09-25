@@ -42,6 +42,11 @@ namespace indra_toolkit
             }
         }
 
+        void ResetChilds()
+        {
+            m_Children.clear();
+        }
+
         int GetNumOfChilds() const { return m_Children.size() - 1; }
         //returns index of the child with the name passed. If not found it returns -1
         int GetIndexOfChild(const std::string& ChildName);

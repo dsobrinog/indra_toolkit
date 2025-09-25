@@ -48,6 +48,7 @@ namespace indra_toolkit
 
         bool Initialize();
         bool OpenCommsThread(std::unique_ptr<IWorkerTaskBase> worker_Task_);
+        inline void SetCommsThreadFecuency(int miliseconds){ worker_frecuency = miliseconds; }
 
         void Update();
 
@@ -227,6 +228,7 @@ namespace indra_toolkit
         std::map<ToolModules, std::unique_ptr<Module>> module_map;
 
         std::unique_ptr<WorkerThread> worker_comms;
+        int worker_frecuency = 10; //ms
         std::unique_ptr<IWorkerTaskBase> comms_task;
 
         GLFWwindow* window = nullptr;

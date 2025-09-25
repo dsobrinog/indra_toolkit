@@ -45,8 +45,11 @@ namespace indra_toolkit
 
                 for (int i = 0; i < n; i++)
                 {
-                    ImGui::TableSetColumnIndex(i);
-                    m_Children[i]->OnRender();
+                    if (m_Children[i]->IsEnabled())
+                    {
+                        ImGui::TableSetColumnIndex(i);
+                        m_Children[i]->OnRender();
+                    }
                 }
 
                 ImGui::EndTable();

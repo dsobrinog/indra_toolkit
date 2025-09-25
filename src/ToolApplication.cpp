@@ -77,7 +77,7 @@ bool ToolApplication::OpenCommsThread(std::unique_ptr<IWorkerTaskBase> worker_ta
     }
 
     try {
-        worker_comms = std::make_unique<WorkerThread>(std::move(worker_task_));
+        worker_comms = std::make_unique<WorkerThread>(std::move(worker_task_), worker_frecuency);
         worker_comms->Start();
         
         std::cout << "Initialized Comms Worker" << std::endl;

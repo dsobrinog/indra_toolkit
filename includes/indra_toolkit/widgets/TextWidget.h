@@ -12,6 +12,10 @@ namespace indra_toolkit
         ImVec2 m_Size;
     
     public:
+
+        explicit TextWidget(const char* text)
+            : m_text(std::string(text)), m_text_ptr(nullptr)
+        {}   
         explicit TextWidget(const std::string& text)
             : m_text(text), m_text_ptr(nullptr)
         {}   

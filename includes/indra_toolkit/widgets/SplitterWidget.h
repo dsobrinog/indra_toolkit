@@ -105,6 +105,20 @@ namespace indra_toolkit
             containerWidget->AddChild(widget);
         }     
 
+        void ChangeWidgetTop(Widget* new_widget)
+        {
+            ContainerWidget* containerWidget = static_cast<ContainerWidget*>(GetTopWidget());
+            containerWidget->ResetChilds();
+            containerWidget->AddChild(new_widget);
+        }
+
+        void ChangeWidgetBottom(Widget* new_widget)
+        {
+            ContainerWidget* containerWidget = static_cast<ContainerWidget*>(GetBottomWidget());
+            containerWidget->ResetChilds();
+            containerWidget->AddChild(new_widget);
+        }
+
         void EnableTop(bool state) 
         {
             state ? GetTopWidget()->Enable() : GetTopWidget()->Disable();

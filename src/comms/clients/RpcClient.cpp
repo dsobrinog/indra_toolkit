@@ -43,7 +43,7 @@ bool RpcClient::Connect()
                     << ") in server " << config_.ip
                     << " ****" << std::endl;
 
-        std::cout << ">>> " << config_.name_app << ", pid: " << getpid()
+        std::cout << ">>> Tool data: " << config_.name_app << ", pid: " << getpid()
                     << ", thread id: " << pthread_self()
                     << std::endl;
 
@@ -60,17 +60,12 @@ void RpcClient::Disconnect()
     }
 }
 
-char* indra_toolkit::RpcClient::Read(const char* arg1)
+std::string indra_toolkit::RpcClient::Read(const char* arg1)
 {
     if (!clnt) return nullptr;
     char **res = leo_1(arg1, clnt);
-
-
-
-    // if (!res || !*res) return nullptr;
-    // return strdup(*res); // caller must free()
-
-    return *(leo_1(arg1, clnt));
+    if (!res || !*res) return std::string("");
+    return std::string(*res);
 }
 
 void indra_toolkit::RpcClient::Write(char* arg1, const char* arg2)
@@ -78,3 +73,20 @@ void indra_toolkit::RpcClient::Write(char* arg1, const char* arg2)
     escribo_1(arg1, arg2, clnt);
 }
 
+void indra_toolkit::RpcClient::InitTimeExecutive()
+{
+    inittiempoejecutivo_1(clnt);
+}
+
+void indra_toolkit::RpcClient::InitTimeModules()
+{
+    inittiempomodulos_1(clnt);
+}
+
+std::string indra_toolkit::RpcClient::GetModuleName(int index)
+{
+    if (!clnt) return nullptr; // No client
+    char **res = getmodulename_1(index, clnt);
+    if (!res || !*res) return nullptr; // No result
+    return std::string(*res);
+}

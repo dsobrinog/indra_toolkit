@@ -19,12 +19,16 @@ namespace indra_toolkit
         /// @brief RPC that request a value from remote server
         /// @param arg1 identifier or name of the value
         /// @return char pointer to the value
-        virtual char* Read(const char* arg1) = 0;
+        virtual std::string Read(const char* arg1) = 0;
 
         /// @brief RPC that sends a value to remote server
         /// @param arg1 value
         /// @param arg2 address
         virtual void Write(char* arg1, const char* arg2) = 0;
+
+        virtual void InitTimeExecutive() = 0;
+        virtual void InitTimeModules() = 0;
+        virtual std::string GetModuleName(int index) = 0;
 
      protected:
         NetworkConfiguration config_;

@@ -14,8 +14,13 @@ namespace indra_toolkit
         bool Connect() override;
         void Disconnect() override;
 
-        char* Read(const char* arg1);
+        std::string Read(const char* arg1);
         void Write(char* arg1, const char* arg2);
+
+        void InitTimeExecutive();
+        void InitTimeModules();
+        std::string GetModuleName(int index);
+
 
     private:
         CLIENT* clnt = nullptr; // from Sun RPC
