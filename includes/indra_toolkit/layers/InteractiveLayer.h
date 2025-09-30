@@ -17,6 +17,8 @@ namespace indra_toolkit
             inline void SetWindowRounding(float rounding) { _windowRounding = rounding; }
             inline void SetWindowPadding(const ImVec2& padding) { _windowPadding = padding; }
             inline void SetWindowFlags(ImGuiWindowFlags flags){ window_flags = flags; }
+            inline ImGuiWindowFlags GetWindowFlags() const { return window_flags; }
+
 
         protected:
             ImVec4 _bgColor = ImVec4(0.1f, 0.1f, 0.1f, 1.f);

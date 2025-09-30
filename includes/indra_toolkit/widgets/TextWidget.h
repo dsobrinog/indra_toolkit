@@ -2,6 +2,7 @@
 #pragma once
 
 #include "indra_toolkit/Widget.h"
+#include "indra_toolkit/Utils.h"
 
 namespace indra_toolkit
 {
@@ -9,7 +10,6 @@ namespace indra_toolkit
     {
         std::string m_text;
         const std::string* m_text_ptr = nullptr;
-        ImVec2 m_Size;
     
     public:
 
@@ -41,12 +41,8 @@ namespace indra_toolkit
             return m_text_ptr ? *m_text_ptr : m_text;
         }
         
-        void SetSize(const ImVec2 size) {m_Size = size; }
-
         virtual void OnProcessData(){};
         virtual void Draw() override {
-            // ImGui::LabelText(m_Text.c_str(), "lorem ipsum");
-
             ImGui::TextUnformatted(GetText().c_str());
         }
     };

@@ -9,7 +9,7 @@ namespace indra_toolkit
     class Module
     {
     public:
-        Module(ToolApplication* app_, const ToolModules& module_identity_) : tool_app(app_), module_identity(module_identity_) {}
+        Module(ToolApplication* app_, ToolModules module_identity_) : tool_app(app_), module_identity(module_identity_) {}
         virtual ~Module() = default;
 
         virtual bool OnInit() { return true; }

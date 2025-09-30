@@ -9,9 +9,9 @@ namespace indra_toolkit
     {
         TextWidget m_TextWidget;
         
-        ImVec2 m_Size;
         ImVec4 m_BgColor;
         ImVec4 m_TextColor;
+        ImVec2 m_Offset;
 
     public:
 
@@ -23,8 +23,10 @@ namespace indra_toolkit
         TextBackgroundWidget(const std::string& text,                                       
                              ImVec2 size = ImVec2(100, 50),                                 
                              ImVec4 bgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f),               
-                             ImVec4 textColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f))             
-            : m_TextWidget(text), m_Size(size), m_BgColor(bgColor), m_TextColor(textColor)
+                             ImVec4 textColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
+                             ImVec2 offset_ = ImVec2(0, 0))
+           
+            : m_TextWidget(text), m_BgColor(bgColor), m_TextColor(textColor), m_Offset(offset_)
         {}
 
         /// @brief Creates a dynamic text with background
@@ -35,13 +37,14 @@ namespace indra_toolkit
         TextBackgroundWidget(const std::string* textPtr,
                              ImVec2 size = ImVec2(100, 50),
                              ImVec4 bgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f),
-                             ImVec4 textColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f))
-            : m_TextWidget(textPtr), m_Size(size), m_BgColor(bgColor), m_TextColor(textColor)
+                             ImVec4 textColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
+                             ImVec2 offset_ = ImVec2(0, 0))
+            : m_TextWidget(textPtr), m_BgColor(bgColor), m_TextColor(textColor), m_Offset(offset_)
         {}
-            
+
+        inline void SetOffset(const ImVec2& offset_) { m_Offset = offset_; }
         inline void SetText(const std::string& text) { m_TextWidget.SetText(text); }
         inline void SetDynamicText(const std::string* textPtr) { m_TextWidget.SetDynamicText(textPtr); }
-        inline void SetSize(const ImVec2& size) { m_Size = size; }
         inline void SetBgColor(const ImVec4& color) { m_BgColor = color; }
         inline void SetTextColor(const ImVec4& color) { m_TextColor = color; }
 
@@ -54,22 +57,25 @@ namespace indra_toolkit
         virtual void Draw() override 
         {
             ImVec2 pos = ImGui::GetCursorScreenPos();
+            pos.x += m_Offset.x;
+            pos.y += m_Offset.y;
+
             ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-            // Draw background
-            draw_list->AddRectFilled(pos, ImVec2(pos.x + m_Size.x, pos.y + m_Size.y),
-                                     ImGui::GetColorU32(m_BgColor));
+            // Background
+            draw_list->AddRectFilled(pos, ImVec2(pos.x + GetPixelSize().x, pos.y + GetPixelSize().y),
+                                    ImGui::GetColorU32(m_BgColor));
 
-            // Draw text using TextWidget
+            // Centered text
             ImVec2 text_size = ImGui::CalcTextSize(m_TextWidget.GetText().c_str());
-            ImVec2 text_pos = ImVec2(
-                pos.x + (m_Size.x - text_size.x) * 0.5f,
-                pos.y + (m_Size.y - text_size.y) * 0.5f
+            ImVec2 text_pos(
+                pos.x + (GetPixelSize().x - text_size.x) * 0.5f,
+                pos.y + (GetPixelSize().y - text_size.y) * 0.5f
             );
             draw_list->AddText(text_pos, ImGui::GetColorU32(m_TextColor),
-                               m_TextWidget.GetText().c_str());
+                            m_TextWidget.GetText().c_str());
 
-            ImGui::Dummy(m_Size);
+            ImGui::Dummy(GetPixelSize());
         }
     };
 }

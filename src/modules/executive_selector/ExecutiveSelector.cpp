@@ -10,6 +10,11 @@
 
 namespace indra_toolkit
 {
+    ExecutiveSelector::ExecutiveSelector(ToolApplication* app_, ToolModules moduleIdentity_)
+        : Module(app_, moduleIdentity_)
+    {
+
+    }
     bool ExecutiveSelector::OnInit()
     {
         original_wnd_size = tool_app->GetMainWindowSize(); 

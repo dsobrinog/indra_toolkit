@@ -20,7 +20,7 @@ namespace indra_toolkit
     class ExecutiveSelector : public Module
     {
     public:
-        ExecutiveSelector(ToolApplication* app_, const ToolModules& moduleIdentity_) : Module(app_, moduleIdentity_){}
+        ExecutiveSelector(ToolApplication* app_, ToolModules moduleIdentity_);
 
         virtual bool OnInit() override;
 

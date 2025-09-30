@@ -1,11 +1,13 @@
 #include "indra_toolkit/widgets/TableWidget.h"
 
+using namespace indra_toolkit;
+
 indra_toolkit::TableWidget::TableWidget(const std::string &table_name, int column_number, int row_number)
     : Widget(),
       table_name(table_name),
       col_num(column_number),
       row_num(row_number),
-      table_flags(ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg), // default flags
+      table_flags(ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersV), // default flags
       show_title(true) // show table name by default
 {
     SetSize(column_number, row_number);
@@ -69,34 +71,74 @@ void indra_toolkit::TableWidget::Draw()
     if (show_title && !table_name.empty())
         ImGui::Text("%s", table_name.c_str());
 
-    if (ImGui::BeginTable(table_name.c_str(), col_num, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+    if (ImGui::BeginTable(table_name.c_str(), col_num, table_flags))
     {
-        // Setup headers
         for (int c = 0; c < col_num; c++)
         {
             std::string header = (c < (int)headers.size() && !headers[c].empty()) 
                                  ? headers[c] 
                                  : "Col " + std::to_string(c);
-            ImGui::TableSetupColumn(header.c_str());
-        }
-        
-        // Draw header row only if enabled
-        if (show_headers)
-            ImGui::TableHeadersRow();
 
-        // Fill rows
-        for (int r = 0; r < row_num; r++) {
+            ImGui::TableSetupColumn(header.c_str(), ImGuiTableColumnFlags_WidthStretch |
+                                                    ImGuiTableColumnFlags_NoReorder |
+                                                    ImGuiTableColumnFlags_NoResize
+                                                );
+        }
+
+        // Headers
+        if (show_headers)
+        {
+            ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
+            for (int c = 0; c < col_num; c++)
+            {
+                ImGui::TableSetColumnIndex(c);
+                const std::string& header = (c < (int)headers.size()) ? headers[c] : "";
+
+                float padding = 15.0f; // Ajusta según necesites
+                if (c == 0) // primera columna
+                    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
+
+
+                if (center_headers)
+                {
+                    ImVec2 text_size = ImGui::CalcTextSize(header.c_str());
+                    float col_width = ImGui::GetColumnWidth(c);
+                    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (col_width - text_size.x) * 0.5f);
+                }
+
+                ImGui::Text("%s", header.c_str());
+            }
+        }
+        else
+        {
+            ImGui::TableNextRow(ImGuiTableRowFlags_None);
+        }
+
+        // Cells
+        for (int r = 0; r < row_num; r++)
+        {
             ImGui::TableNextRow();
-            for (int c = 0; c < col_num; c++) {
+            for (int c = 0; c < col_num; c++)
+            {
                 ImGui::TableSetColumnIndex(c);
                 const TableCell& cell = cells[r][c];
 
-                if (cell.custom_color) {
+                if (center_cells)
+                {
+                    ImVec2 text_size = ImGui::CalcTextSize(cell.Get().c_str());
+                    float col_width = ImGui::GetColumnWidth(c);
+                    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (col_width - text_size.x) * 0.5f);
+                }
+
+                if (cell.custom_color)
+                {
                     ImGui::PushStyleColor(ImGuiCol_Text, *cell.custom_color);
                     ImGui::Text("%s", cell.Get().c_str());
                     ImGui::PopStyleColor();
-                } else {
-                    ImGui::Text("%s", cell.Get().c_str()); // default style
+                }
+                else
+                {
+                    ImGui::Text("%s", cell.Get().c_str());
                 }
             }
         }

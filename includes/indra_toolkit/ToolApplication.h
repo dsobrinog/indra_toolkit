@@ -129,8 +129,15 @@ namespace indra_toolkit
             static_assert(std::is_base_of<Module, T>::value, 
                 "T must derive from Module");
             
-            static_assert(std::is_constructible<T, ToolApplication*, ToolModules, Args...>::value,
-                "Wrong constructor arguments for module type T (must accept ToolApplication*, ToolModules, ...)");
+            static_assert(std::is_destructible<T>::value,
+                "T must be destructible (needed by unique_ptr)");
+
+            static_assert(!std::is_abstract<T>::value,
+                "T must not be abstract (cannot instantiate abstract class)");
+            static_assert(
+                    std::is_constructible<T, ToolApplication*, ToolModules, Args...>::value,
+                    "Wrong constructor arguments for module type T (must accept ToolApplication*, ToolModules, ...)"
+                );
             
             auto it = module_map.find(module_enum_);
             if (it != module_map.end())

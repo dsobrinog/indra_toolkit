@@ -15,7 +15,7 @@ namespace indra_toolkit
     class FileExplorer : public Module
     {
     public:
-        FileExplorer(ToolApplication* app_, const ToolModules& moduleIdentity_) : Module(app_, moduleIdentity_){}
+        FileExplorer(ToolApplication* app_, ToolModules moduleIdentity_) : Module(app_, moduleIdentity_){}
 
         virtual bool OnInit() override;
         virtual void OnUpdate() override;

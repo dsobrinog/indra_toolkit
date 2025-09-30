@@ -99,6 +99,8 @@ namespace indra_toolkit
             virtual UIHorizontalAlignment GetHorizontalAlignment() const;
             virtual void SetHorizontalAlignment(UIHorizontalAlignment horizontalAlignment);
 
+            void SetPositionVars(const PositionVars& position_vars_) { m_posVars = position_vars_; }
+
             //-----------------------------------------//
         
             void SetContainer(ContainerWidget* ContainerWidget) { m_Container = ContainerWidget; }
