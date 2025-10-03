@@ -92,7 +92,7 @@ namespace indra_toolkit
         else if (GetSize().x != width || GetSize().y != height)
         {
             std::cout << "Warning: image size " << width << "x" << height
-                      << " differs from widget size " << GetSize().x << "x" << GetSize().y << std::endl;
+                      << " differs from widget size " << m_ImageSize.x << "x" << m_ImageSize.y << std::endl;
         }
     }
 
@@ -104,8 +104,10 @@ namespace indra_toolkit
 
         if(type == ButtonType::Full_Image)
             FullImageDraw();
-        else
+        else if(type == ButtonType::Relative_Image)
             RelativeImageDraw();
+        else if(type == ButtonType::Next_Text)
+            NextToTextDraw();
     }
 
  
@@ -231,7 +233,102 @@ namespace indra_toolkit
         ImGui::PopID();
     }
 
+    bool align_left = true;   // configurable
 
+    void ImageButtonWidget::NextToTextDraw()
+    {
+        if (initial_draw)
+        {
+            initial_draw = false;
+            originalXSize = GetPixelSize().x;
+            originalYSize = GetPixelSize().y;
+
+            // Guardamos proporciones relativas respecto al botón inicial
+            relativeX = m_ImageOffset.x / originalXSize;
+            relativeY = m_ImageOffset.y / originalYSize;
+            relativeW = m_ImageSize.x   / originalXSize;
+            relativeH = m_ImageSize.y   / originalYSize;
+        }
+
+        ImGui::PushID(this);
+
+        // Calcular factores de escala respecto al tamaño original
+        float scaleFactorX = GetPixelSize().x / originalXSize;
+        float scaleFactorY = GetPixelSize().y / originalYSize;
+        float finalScaleFactor = std::min(scaleFactorX, scaleFactorY);
+
+        // Draw the actual clickable button
+        ImGui::PushStyleColor(ImGuiCol_Button, m_BgColor);
+        ImGui::PushStyleColor(ImGuiCol_Text, m_TextColor);
+
+        // Escalar el texto SOLO para este botón
+        ImGui::SetWindowFontScale(finalScaleFactor);
+
+        if (ImGui::Button(GetWidgetName().c_str(), GetPixelSize()))
+        {
+            if (onClick) onClick();
+        }
+
+        // Restaurar el tamaño original de la fuente
+        ImGui::SetWindowFontScale(1.0f);
+        ImGui::PopStyleColor(2);
+
+        ImVec2 buttonPos  = ImGui::GetItemRectMin();
+        ImVec2 buttonSize = ImGui::GetItemRectSize();
+
+        // --- ICON RENDERING ---
+        // 1. Get text size (scaled, since font scale was active)
+        const char* label = GetWidgetName().c_str();
+        ImVec2 textSize = ImGui::CalcTextSize(label, nullptr, true);
+        textSize.x *= finalScaleFactor;
+        textSize.y *= finalScaleFactor;
+
+        // 2. Compute centered text position inside button
+        ImVec2 textPos(
+            buttonPos.x + (buttonSize.x - textSize.x) * 0.5f,
+            buttonPos.y + (buttonSize.y - textSize.y) * 0.5f
+        );
+
+        // 3. Spacing between text and icon
+        float spacing = 5.0f * scaleFactorX;
+
+        ImVec2 imgPos;
+        if (align_left)
+        {
+            // icon to the left
+            imgPos = ImVec2(
+                textPos.x - m_ImageSize.x - spacing,
+                textPos.y + (textSize.y - m_ImageSize.y) * 0.5f
+            );
+        }
+        else
+        {
+            // icon to the right
+            imgPos = ImVec2(
+                textPos.x + textSize.x + spacing,
+                textPos.y + (textSize.y - m_ImageSize.y) * 0.5f
+            );
+        }
+
+        // 4. Apply custom offset (user-defined, also scaled)
+        imgPos.x += m_ImageOffset.x * scaleFactorX;
+        imgPos.y += m_ImageOffset.y * scaleFactorY;
+
+        ImVec2 imgEnd(imgPos.x + m_ImageSize.x,
+                    imgPos.y + m_ImageSize.y);
+
+        // 5. Draw
+        ImGui::GetWindowDrawList()->AddImage(
+            (ImTextureID)(intptr_t)textureID,
+            imgPos,
+            imgEnd,
+            uv0,
+            uv1,
+            ImColor(m_ImageTint.x, m_ImageTint.y, m_ImageTint.z, m_ImageTint.w)
+        );
+
+        ImGui::PopID();
+    }
 
     // --- Setters ---
     void ImageButtonWidget::SetTexture(GLuint tex)

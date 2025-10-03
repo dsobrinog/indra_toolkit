@@ -11,12 +11,15 @@ namespace indra_toolkit
     {
         std::string name;                           // Nombre del menú o item
         std::function<void()> callback = nullptr;   // Callback al seleccionar
-        std::vector<MenuElement> childs;            // Submenús
+        std::vector<MenuElement> childs;            // Submenús      
+        std::string shortcut;
+        ImTextureID icon; 
         
         //X is the 
-        ImVec2 SpacingFromPrevious = {0, 0};
+        ImVec2 SpacingFromPrev,ious = {0, 0};
         ImVec2 SpacingToNext = {0, 0};
-
+        
+        bool has_icon = false;  
         bool HasChild() const { return !childs.empty(); }
     };
 
@@ -36,6 +39,8 @@ namespace indra_toolkit
             std::vector<MenuElement> menus;
 
             void RenderMenuElement(const MenuElement& element);
+
+            bool CustomImGUIMainMenuImplementation(const char* label, const char* icon, const char* shortcut, bool selected, bool enabled);
 
         private:
             ImVec2 m_windowPadding = {-1, -1};

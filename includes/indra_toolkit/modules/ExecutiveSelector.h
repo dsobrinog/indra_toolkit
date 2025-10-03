@@ -26,14 +26,20 @@ namespace indra_toolkit
 
         virtual void OnShutdown() override;
 
-        virtual bool IsDeferred() const { return false; }
-
         /// @brief Retrieve a list with the PIDs of the current running Executives in this machine
         /// @return list of executive running PIDs
         std::vector<int> GetRunningExecutives();
 
         void SetOnExecutiveSelectedCallback(std::function<void(int)> callback_) { on_exec_selected = callback_; }
         void SetSelectorWindowName(const std::string& in_name_of_window_) { name_of_selector_window = in_name_of_window_;}
+
+        /// @brief Should exit app when no executives are running
+        /// @param value 
+        void EnableQuit(bool value){
+            should_quit=value;
+        }
+
+        bool ShouldQuit(){ return should_quit; };
 
     private:
 
@@ -54,6 +60,8 @@ namespace indra_toolkit
         ComboBoxWidget* combo_box = nullptr;
 
         ImVec2 original_wnd_size;
+
+        bool should_quit = false;
 
         std::function<void(int)> on_exec_selected;
         std::string name_of_selector_window;

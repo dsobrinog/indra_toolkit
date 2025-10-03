@@ -51,6 +51,12 @@ namespace indra_toolkit
             {
                 static_assert(std::is_base_of<Widget, T>::value, 
                     "T must derive from Widget");
+                
+                static_assert(std::is_destructible<T>::value,
+                "T must be destructible (needed by unique_ptr)");
+
+                static_assert(!std::is_abstract<T>::value,
+                    "T must not be abstract (cannot instantiate abstract class)");
 
                 static_assert(std::is_constructible<T, Args...>::value,
                     "Layer::CreateWidget: Wrong constructor arguments for widget type T");

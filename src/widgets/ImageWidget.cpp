@@ -27,5 +27,17 @@ ImageWidget::~ImageWidget()
 void ImageWidget::Draw()
 {
     if (!IsEnabled() || textureID == 0) return;
+
+    // Obtener la posición actual del cursor
+    ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+
+    // Mover el cursor con el offset
+    ImVec2 newPos(cursorPos.x + offset.x, cursorPos.y + offset.y);
+    ImGui::SetCursorScreenPos(newPos);
+
+    // Dibujar la imagen
     ImGui::Image((void*)(intptr_t)textureID, GetPixelSize());
+
+    // Restaurar posición para no afectar otros widgets
+    ImGui::SetCursorScreenPos(cursorPos);
 }

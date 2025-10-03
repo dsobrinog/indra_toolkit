@@ -106,8 +106,8 @@ void indra_toolkit::RpcClient::InitTimeModules()
 
 std::string indra_toolkit::RpcClient::GetModuleName(int index)
 {
-    if (!clnt) return nullptr; // No client
+    if (!clnt) return ""; // Return empty string, not nullptr
     char **res = getmodulename_1(index, clnt);
-    if (!res || !*res) return nullptr; // No result
-    return std::string(*res);
+    if (!res || !*res) return ""; // No result
+    return std::string(*res); // Safe if *res is valid
 }

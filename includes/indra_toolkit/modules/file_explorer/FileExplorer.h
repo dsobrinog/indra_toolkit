@@ -21,7 +21,7 @@ namespace indra_toolkit
         virtual void OnUpdate() override;
         virtual void OnShutdown() override;
 
-        virtual bool IsDeferred() const { return true; }
+        virtual bool IsDeferred() const override { return true; }
 
         void SetFatherLayer(InteractiveLayer* in_interactive_layer_) {interactive_layer = in_interactive_layer_; }
 

@@ -1,4 +1,6 @@
 #include "indra_toolkit/widgets/MainMenuWidget.h"
+#include "imgui_internal.h"
+
 
 void indra_toolkit::MainMenuBarWidget::OnProcessData()
 {
@@ -26,7 +28,7 @@ void indra_toolkit::MainMenuBarWidget::AddMenu(const MenuElement &menu)
 
 void indra_toolkit::MainMenuBarWidget::RenderMenuElement(const MenuElement &element)
 {
-    if(element.SpacingFromPrevious.x != 0 || element.SpacingFromPrevious.y != 0) ImGui::SameLine(element.SpacingFromPrevious.x, element.SpacingFromPrevious.y);
+    if(element.SpacingFromPrev.x != 0 || element.SpacingFromPrev.y != 0) ImGui::SameLine(element.SpacingFromPrev.x, element.SpacingFromPrev.y);
 
     if (element.HasChild())
     {
@@ -40,12 +42,28 @@ void indra_toolkit::MainMenuBarWidget::RenderMenuElement(const MenuElement &elem
     }
     else
     {
-        if (ImGui::MenuItem(element.name.c_str()))
+        if (!element.HasChild())
         {
-            if (element.callback)
-                element.callback();
+            ImGui::PushID(element.name.c_str());
+
+            if (element.icon)
+            {
+                ImGui::Image((void*)(intptr_t)element.icon, ImVec2(16,16));
+                ImGui::SameLine();
+            }
+
+            if (ImGui::MenuItem(element.name.c_str(),
+                                element.shortcut.empty() ? nullptr : element.shortcut.c_str()))
+            {
+                if (element.callback)
+                    element.callback();
+            }
+
+            ImGui::PopID();
         }
+
     }
 
     if(element.SpacingToNext.x != 0 || element.SpacingToNext.y != 0) ImGui::SameLine(element.SpacingToNext.x, element.SpacingToNext.y);
 }
+

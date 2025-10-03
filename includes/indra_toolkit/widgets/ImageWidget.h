@@ -13,8 +13,13 @@ namespace indra_toolkit
 
         virtual void Draw() override;
 
+        void SetOffset(const ImVec2& offset_) { offset = offset_; }
+        void SetOffset(float x, float y) { offset = ImVec2(x, y); }
+        ImVec2 GetOffset() const { return offset; }
+
     private:
         ImageLoader* image_loader = nullptr;
         GLuint textureID = 0;
+        ImVec2 offset = ImVec2(0, 0);
     };
 }

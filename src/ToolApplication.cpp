@@ -108,7 +108,8 @@ bool ToolApplication::InitGLFW()
     if (!glfwInit()) {
         return false;
     }
-
+    initial_width = wnd_width;
+    initial_height = wnd_height;
     window = glfwCreateWindow(wnd_width, wnd_height, app_name.c_str(), NULL, NULL);
     if (!window) return false;
 
@@ -125,6 +126,8 @@ bool ToolApplication::InitGLFW()
         io.DisplayFramebufferScale = ImVec2(xscale, yscale);
         std::cout << "DPI Scale changed: " << xscale << "x" << yscale << std::endl;
     });
+
+    GetResolutionMonitor();
 
     std::cout << "Initialize GLFW" << std::endl;
     return true;
@@ -150,7 +153,10 @@ void ToolApplication::FramebufferSizeCallback(GLFWwindow* window_, int width_, i
 
 void ToolApplication::SetWindowSize(const int in_width_, const int in_height_)
 {
-    glfwSetWindowSize(window, in_width_, in_height_);
+    int targetWidth = std::min(in_width_, wnd_max_width);
+    int targetHeight = std::min(in_height_, wnd_max_height);
+
+    glfwSetWindowSize(window, targetWidth, targetHeight);
 }
 
 void ToolApplication::SetMinWindowSize(const int in_min_width_, const int in_min_height_)
@@ -162,6 +168,21 @@ void ToolApplication::SetMinWindowSize(const int in_min_width_, const int in_min
 void ToolApplication::ClampOSWindowResize(bool state_)
 {
     clamp_OS_Window_Resize = state_;
+}
+
+void indra_toolkit::ToolApplication::GetResolutionMonitor()
+{
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+    wnd_max_width = mode->width;
+    wnd_max_height = mode->height;
+    std::cout << "Monitor resolution X: " << wnd_max_width << " Y: " << wnd_max_height << std::endl;
+}
+
+const bool ToolApplication::IsWindowMaximized()
+{
+    return glfwGetWindowAttrib(window, GLFW_MAXIMIZED) == GLFW_TRUE;
 }
 
 bool ToolApplication::InitImGui()
@@ -278,10 +299,10 @@ void ToolApplication::Update()
 
 bool indra_toolkit::ToolApplication::IsActive()
 {
-    return app_state != ApplicationState::ACTIVE || !glfwWindowShouldClose(window);
+return app_state == ApplicationState::ACTIVE && !glfwWindowShouldClose(window);
 }
 
-void indra_toolkit::ToolApplication::QuitApplication()
+void indra_toolkit::ToolApplication::RequestQuit()
 {
     app_state = ApplicationState::CLOSE;
 }
@@ -292,18 +313,21 @@ void indra_toolkit::ToolApplication::ChangeAppTitle(const std::string& app_name_
     if(window) glfwSetWindowTitle(window, app_name.c_str());
 }
 
+
 void ToolApplication::Shutdown()
 {
     if(worker_comms)
         worker_comms->Stop();
 
-    EndModules();
-    OnEnd();
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    EndModules();                   // MODULES 
+    OnEnd();                        // CUSTOM APP 
+    ImGui_ImplOpenGL3_Shutdown();   // OPENGL 
+    ImGui_ImplGlfw_Shutdown();      // ImGui
+    ImGui::DestroyContext();       
+    glfwDestroyWindow(window);      // GLWF
+    glfwTerminate(); 
+    std::cout << "Tool Application terminated - " << app_name << " - EXIT!" << std::endl;   
+    exit(-1);
 }
 
 void indra_toolkit::ToolApplication::SetupSignalHandlers()

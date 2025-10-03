@@ -50,8 +50,9 @@ namespace indra_toolkit
 
         void FullImageDraw();
         void RelativeImageDraw();
+        void NextToTextDraw();
 
-        enum ButtonType{ Full_Image, Relative_Image} type;
+        enum ButtonType{ Full_Image, Relative_Image, Next_Text} type;
         /// @brief Set the type of button image: 
         /// @param _type Image_Full: The icon size is equal to button size. Relative_Image: You specify button size, image size and place image with an offset
         inline void SetButtonType(ButtonType _type){ type = _type;}

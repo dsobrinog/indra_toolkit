@@ -17,7 +17,6 @@ namespace indra_toolkit
         ResourceManager(ToolApplication* app_, ToolModules moduleIdentity_);
 
         virtual void OnShutdown() override;
-        virtual bool IsDeferred() const { return false; }
 
         void SetResourceRoot(const std::string& path);
         const std::filesystem::path& GetResourcePath() const {return res_root;}

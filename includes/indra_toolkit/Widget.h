@@ -126,16 +126,16 @@ namespace indra_toolkit
             PositionVars m_posVars;
             UIStyleFlags m_style;
 
+            bool enable = true;
+            bool draw_debug = false;
+            std::string layer_name = {"Default Layer"};
+            std::string widget_name = {"Default Name"}; //For debug purposes mostly, I wanna know which widget is which
         private:
             bool ShouldUseAnchor() const;
             bool ShouldUseAlignment() const;
 
             //-----------------------------------------//
 
-            bool enable = true;
-            bool draw_debug = false;
-            std::string layer_name = {"Default Layer"};
-            std::string widget_name = {"Default Name"}; //For debug purposes mostly, I wanna know which widget is which
 
             ContainerWidget* m_Container = nullptr;  //The widget that contains this widget. Null for root widgets
             Layer* owning_layer = nullptr;

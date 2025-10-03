@@ -58,7 +58,7 @@ namespace indra_toolkit
         virtual void OnEnd() = 0;
 
         bool IsActive();
-        void QuitApplication();
+        void RequestQuit();
 
 
         // --------------------------
@@ -183,8 +183,12 @@ namespace indra_toolkit
 
         /// @brief Get size of GLFW window
         /// @return 
-        inline const ImVec2 GetMainWindowSize() { return ImVec2((float)wnd_width, (float)wnd_height); } 
+        const ImVec2 GetMainWindowSize() { return ImVec2((float)wnd_width, (float)wnd_height); } 
+        const ImVec2 GetMainWindowScaleFactor() { 
+            return ImVec2(std::abs(wnd_width/initial_width), std::abs(wnd_height/initial_height)); } 
 
+        void GetResolutionMonitor();
+        const bool IsWindowMaximized();
         void ChangeAppTitle(const std::string& app_name_);
         std::string GetAppName() const { return app_name; }
         void SetWindowSize(const int in_width_, const int in_height_);
@@ -201,9 +205,9 @@ namespace indra_toolkit
 
         /// @brief Set IP and port configuration for networking
         /// @param config 
-        inline void SetNetworkConfiguration(NetworkConfiguration& config_){ network_config = config_; }
-        inline const std::string& GetIP(){ return network_config.ip; }
-        inline const std::string& GetPort(){ return network_config.port; }
+        void SetNetworkConfiguration(NetworkConfiguration& config_){ network_config = config_; }
+        const std::string& GetIP(){ return network_config.ip; }
+        const std::string& GetPort(){ return network_config.port; }
         
         // --------------------------
         // DEBUG CONFIGURATION
@@ -246,11 +250,17 @@ namespace indra_toolkit
         ApplicationState app_state = NONE;
 
         // glfw window size
+        int initial_width = -1;
+        int initial_height = -1;
         int wnd_width = 685;
         int wnd_height = 315;
 
         int wnd_min_width = 685;
         int wnd_min_height = 315;
+        int wnd_max_width = -1;
+        int wnd_max_height = -1;
+        float scale_factorX = -1;
+        float scale_factorY = -1;
 
         bool clamp_OS_Window_Resize = false;
 

@@ -110,8 +110,8 @@ GLuint indra_toolkit::ImageLoader::LoadTextureFromXPMFile(const std::string& pat
         iss >> width >> height >> numColors >> cpp;
         
         // Debug output to verify parsing
-        std::cout << "XPM Header: " << width << "x" << height 
-                  << ", colors: " << numColors << ", cpp: " << cpp << std::endl;
+        // std::cout << "XPM Header: " << width << "x" << height 
+        //           << ", colors: " << numColors << ", cpp: " << cpp << std::endl;
     }
 
     if (out_width) *out_width = width;
@@ -190,9 +190,9 @@ GLuint indra_toolkit::ImageLoader::LoadTextureFromXPMFile(const std::string& pat
         }
 
         colorTable[key] = rgba;
-        std::cout << "Color table: '" << key << "' -> " 
-                  << (int)rgba[0] << "," << (int)rgba[1] << "," 
-                  << (int)rgba[2] << "," << (int)rgba[3] << std::endl;
+        // std::cout << "Color table: '" << key << "' -> " 
+        //           << (int)rgba[0] << "," << (int)rgba[1] << "," 
+        //           << (int)rgba[2] << "," << (int)rgba[3] << std::endl;
     }
 
     // Parse pixels
@@ -237,8 +237,8 @@ GLuint indra_toolkit::ImageLoader::LoadTextureFromXPMFile(const std::string& pat
     file.close();
 
     // Debug: Check first few pixels
-    std::cout << "First pixel: " << (int)pixels[0] << "," << (int)pixels[1] 
-              << "," << (int)pixels[2] << "," << (int)pixels[3] << std::endl;
+    // std::cout << "First pixel: " << (int)pixels[0] << "," << (int)pixels[1] 
+    //           << "," << (int)pixels[2] << "," << (int)pixels[3] << std::endl;
 
     // Upload to OpenGL
     GLuint texture;

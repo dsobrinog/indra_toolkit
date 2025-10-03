@@ -10,6 +10,8 @@
 
 namespace indra_toolkit
 {
+    class ToolApplication;
+
     /// @brief Type-erased base class
     class IWorkerTaskBase
     {
@@ -27,8 +29,8 @@ namespace indra_toolkit
     class IWorkerTask : public IWorkerTaskBase
     {
     public:
-        IWorkerTask(IClient* client) 
-            : _client(client) { };
+        IWorkerTask(IClient* client, ToolApplication* app) 
+            : _client(client), tool_app(app) { };
 
         virtual ~IWorkerTask() = default;
 
@@ -46,6 +48,7 @@ namespace indra_toolkit
         }
 
     protected:
+        ToolApplication* tool_app;
         IClient* _client = nullptr;
         ICommander<CommandEnum> _commander;
     };
