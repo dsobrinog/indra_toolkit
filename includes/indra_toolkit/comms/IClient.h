@@ -30,6 +30,7 @@ namespace indra_toolkit
         virtual bool ListMonitorSubstringEnd(int tool_pid) = 0; 
         virtual std::string ListMonitorSubstringGet(int tool_pid) = 0;
         virtual void* MonitorClose(int tool_pid) = 0;
+        virtual int* Consult(std::string var_to_search) = 0;
 
         virtual void InitTimeExecutive() = 0;
         virtual void InitTimeModules() = 0;

@@ -10,7 +10,7 @@ namespace indra_toolkit
             InteractiveLayer(ToolApplication* app) : Layer(app) {}
             ~InteractiveLayer() {}
 
-            virtual void OnProcess(){};
+            virtual void OnProcess();
             virtual void OnRender();
 
             inline void SetBackgroundColor(const ImVec4& color) { _bgColor = color; }

@@ -6,6 +6,8 @@
 #include <condition_variable>
 #include <iostream>
 
+#include "indra_toolkit/modules/command_callbacks/CommandCallback.h"
+
 namespace indra_toolkit
 {
     /// @brief Register commands at start, push commands runtime from main thread and secondary thread will consume them
@@ -15,6 +17,7 @@ namespace indra_toolkit
     {
     public:
         using CommandHandler = std::function<void()>;
+        
 
         /// @brief Assign callbacks to commands
         void RegisterCommand(CommandEnum cmd, CommandHandler handler)
@@ -49,19 +52,24 @@ namespace indra_toolkit
                 auto it = handlers_.find(cmd);
                 if (it != handlers_.end())
                 {
-                    it->second(); // execute registered handler
+                    it->second(); // execute registered handler 
                 }
                 else
                 {
                     std::cerr << " ICommander: You are trying to execute a command that is not registered!!" << std::endl;
                 }
+
+                if(commander_callback) commander_callback->Enqueue(cmd); //execute callback if we have it
             }
         }
+
+        void SetCommanderCallback(CommandCallback<CommandEnum>* commander_callback_) { commander_callback = commander_callback_; }
 
     private:
         std::unordered_map<CommandEnum, CommandHandler> handlers_;
         std::queue<CommandEnum> queue_;
         std::mutex mutex_;
         std::condition_variable cond_;
+        CommandCallback<CommandEnum>* commander_callback;
     };
 }

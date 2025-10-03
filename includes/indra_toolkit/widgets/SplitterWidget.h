@@ -27,17 +27,21 @@ namespace indra_toolkit
             PositionVars posVars;
             posVars.PosMode = UIBehaviourMode::Relative;
             posVars.SizeMode = UIBehaviourMode::Absolute;
-            HorizontalContainer* topContainer = new HorizontalContainer(posVars, "Splitter Top");
-            HorizontalContainer* bottomContainer = new HorizontalContainer(posVars, "Splitter Bottom");
-            AddChild(topContainer);
-            AddChild(bottomContainer);
+            HorizontalContainer& topContainer = CreateChildWidget<HorizontalContainer>(posVars, "Splitter Top");
+            topContainer.SetWidgetStyle(indra_toolkit::UIStyleFlags::Padding | indra_toolkit::UIStyleFlags::ItemSpacing); 
+            topContainer.SetWindowPadding({0, 0});
+            topContainer.SetItemPadding({0, 0}); 
+            HorizontalContainer& bottomContainer = CreateChildWidget<HorizontalContainer>(posVars, "Splitter Bottom");
+            bottomContainer.SetWidgetStyle(indra_toolkit::UIStyleFlags::Padding | indra_toolkit::UIStyleFlags::ItemSpacing);
+            bottomContainer.SetWindowPadding({0, 0});
+            bottomContainer.SetItemPadding({0, 0});
         }
-
+        
         virtual void Draw() override 
         {  
             // DrawContentRegionBounds(255, 0, 0);
 
-            ImVec2 avail = GetPixelSize(); // free space in parent container
+            ImVec2 avail = GetPixelSize(); // free space in parent container 
             float totalHeight = avail.y;    
             float topHeight;
             float bottomHeight;
@@ -65,12 +69,16 @@ namespace indra_toolkit
 
             if(BothPartsActive())
             {
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImGui::GetStyle().ItemSpacing);
+
                 // Splitter
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f,0.5f,0.5f,0.5f));
                 ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1.0f,1.0f,1.0f,1.0f));
                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.7f,0.7f,0.7f,0.7f));
                 ImGui::Button("##Splitter", ImVec2(-1, m_SplitterThickness));
                 ImGui::PopStyleColor(3);
+                
+                ImGui::PopStyleVar();
 
                 // Drag resize
                 if (ImGui::IsItemActive())
@@ -87,14 +95,14 @@ namespace indra_toolkit
         Widget* GetTopWidget() const 
         {
             if(m_Children.size() > 0)
-                return m_Children[0];
+                return m_Children[0].get();
             else return nullptr;
         }
 
         Widget* GetBottomWidget() const 
         {
             if(m_Children.size() > 1)
-                return m_Children[1];
+                return m_Children[1].get();
             else return nullptr;
         }
 

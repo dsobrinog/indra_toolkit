@@ -70,7 +70,6 @@ namespace indra_toolkit
         CreateExecutiveComboBox(GetRunningExecutives());
 
         horizontalContainer.AddChild(combo_box);
-
             
         indra_toolkit::PositionVars buttonPosVars;
         buttonPosVars.PosMode = indra_toolkit::UIBehaviourMode::Relative;
@@ -80,10 +79,8 @@ namespace indra_toolkit
         buttonPosVars.HorizontalAlign = indra_toolkit::UIHorizontalAlignment::Middle;
         buttonPosVars.Position = { 75.f, 0.f};
 
-        ImVec4 botton_background_color = ImVec4(0.3,0.3,0.3,1.f);
-
         // BUTTON
-        ButtonWidget* confirm_button = new ButtonWidget("Confirm Selection", [this]()
+        ButtonWidget& confirm_button = horizontalContainer.CreateChildWidget<ButtonWidget>("Confirm Selection", [this]()
             {
                 std::cout << "Confirm Button Select" << std::endl;
                 OnConfirmButtonPressed();
@@ -91,9 +88,8 @@ namespace indra_toolkit
             buttonPosVars,
             "Play Button"
         );
-        confirm_button->SetBgColor(botton_background_color);
 
-        horizontalContainer.AddChild(confirm_button);
+        confirm_button.SetBgColor(ImVec4(0.3,0.3,0.3,1.f));
     }
 
     void ExecutiveSelector::CreateExecutiveComboBox(const std::vector<int>& runningExecutivesIDs)
@@ -133,7 +129,8 @@ namespace indra_toolkit
         
         tool_app->UnregisterLayer(interactive_layer);
     }
-}
+
+} //indra_toolkit
 
 // Executive Proc
 std::vector<int> indra_toolkit::ExecutiveSelector::GetRunningExecutives()

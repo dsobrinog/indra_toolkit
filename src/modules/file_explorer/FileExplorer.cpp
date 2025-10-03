@@ -7,7 +7,11 @@ namespace indra_toolkit
 bool FileExplorer::OnInit() 
 {
     std::cout << "FileExplorer Start!" << std::endl;
-    if(!main_menu && interactive_layer) main_menu = &interactive_layer->CreateWidget<indra_toolkit::FEMainMenu>(interactive_layer);
+    if(!main_menu && interactive_layer)
+    { 
+        main_menu = &interactive_layer->CreateWidget<indra_toolkit::FEMainMenu>(interactive_layer);
+        main_menu->SetWidgetName("FileExplorerMainMenu");
+    }
     else if(main_menu) main_menu->SetOpen(true);
 
     TestExplore();

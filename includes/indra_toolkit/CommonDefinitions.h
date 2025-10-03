@@ -9,7 +9,8 @@ namespace indra_toolkit
         M_FileExplorer                    = 2,
         M_ResourceManager                 = 3,
         M_InputSystem                     = 4,
-        M_CursorManager                   = 5
+        M_CursorManager                   = 5,
+        M_CommandCallback                 = 6
     };
 
 }

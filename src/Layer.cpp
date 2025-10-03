@@ -38,7 +38,7 @@ void Layer::OnRender()
 bool indra_toolkit::Layer::IsDebugEnabled() const
 {
     bool debugEnabledInApp = tool_app->IsDebugEnabled();
-    return debugEnabledInApp && IsEnabled() && draw_debug;
+    return debugEnabledInApp || (IsEnabled() && draw_debug);
 }
 
 void indra_toolkit::Layer::RemoveWidget(Widget* widget)

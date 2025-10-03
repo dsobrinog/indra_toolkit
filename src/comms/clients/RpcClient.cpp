@@ -94,7 +94,14 @@ std::string indra_toolkit::RpcClient::ListMonitorSubstringGet(int tool_pid)
 void* indra_toolkit::RpcClient::MonitorClose(int tool_pid)
 {
     return monitor_close_1(tool_pid, clnt); 
-}void indra_toolkit::RpcClient::InitTimeExecutive()
+}
+
+int* indra_toolkit::RpcClient::Consult(std::string var_to_search)
+{
+    return consulto_1(var_to_search.c_str(), clnt);
+}
+
+void indra_toolkit::RpcClient::InitTimeExecutive()
 {
     inittiempoejecutivo_1(clnt);
 }

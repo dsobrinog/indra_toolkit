@@ -14,8 +14,6 @@ namespace indra_toolkit
     public:
         using ContainerWidget::ContainerWidget;    
 
-        virtual void OnProcessData() override {}
-
         virtual void Draw() override
         {
             ImGui::BeginChild(GetWidgetName().c_str(), GetPixelSize(), ImGuiChildFlags_Borders);

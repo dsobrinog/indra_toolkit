@@ -4,6 +4,17 @@
 
 namespace indra_toolkit
 {
+    void InteractiveLayer::OnProcess()
+    {
+        for(int i = 0; i < _widgets.size(); ++i)
+        {
+            if(_widgets[i]->IsEnabled())
+            {
+                _widgets[i]->OnProcessData();
+            }
+        }
+    }
+
     void InteractiveLayer::OnRender()
     {
         // // Full GLFW window (TO DO: editable)
@@ -19,10 +30,13 @@ namespace indra_toolkit
 
         ImGui::Begin(layer_name.c_str(), nullptr, window_flags);
         
-        for (auto& w : _widgets)
+        for(int i = 0; i < _widgets.size(); ++i)
         {
-            if (w->IsEnabled())
-                w->OnRender();
+            if(_widgets[i]->IsEnabled())
+            {
+                _widgets[i]->OnRender();
+
+            }
         }
 
         ImGui::End();

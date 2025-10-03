@@ -4,6 +4,7 @@
 
 #include "Widget.h"
 #include "indra_toolkit/widgets/ButtonWidget.h"
+#include "indra_toolkit/ToolApplication.h"
 
 #include <vector>
 #include <memory>
@@ -13,8 +14,6 @@
 
 namespace indra_toolkit
 {
-
-    class ToolApplication;
 
     class Layer
     {
@@ -92,6 +91,15 @@ namespace indra_toolkit
 
             void SetName(std::string name) { layer_name = std::move(name); }
             inline const std::string& GetName() { return layer_name; }
+
+            template<typename T>
+            T* GetApplication()
+            {
+                static_assert(std::is_base_of<ToolApplication, T>::value, 
+                    "T must derive from ToolApplication");
+
+                return static_cast<T*>(tool_app);
+            }
 
         protected:
             ToolApplication* tool_app = nullptr;

@@ -47,9 +47,12 @@ namespace indra_toolkit
             _commander.Enqueue(cmd);
         }
 
+        void SetCommanderCallback(CommandCallback<CommandEnum>* commander_callback_) { _commander.SetCommanderCallback(commander_callback_); }
+
     protected:
         ToolApplication* tool_app;
         IClient* _client = nullptr;
         ICommander<CommandEnum> _commander;
+
     };
 }

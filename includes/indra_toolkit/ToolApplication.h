@@ -234,6 +234,11 @@ namespace indra_toolkit
 
         // glfw resize callback
         static void FramebufferSizeCallback(GLFWwindow* window_, int width_, int height_);
+        void DynamicWindowClamping();
+
+        void DeferredLayerDestruction();
+
+        void UpdateDebugDraw();
 
         std::vector<std::unique_ptr<Layer>> layers;
         std::vector<Layer*> layers_to_remove;

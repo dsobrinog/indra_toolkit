@@ -24,7 +24,8 @@ namespace indra_toolkit
         void* ListMonitorSubstringBegin(int tool_pid, char* element) override;
         bool ListMonitorSubstringEnd(int tool_pid) override; 
         std::string ListMonitorSubstringGet(int tool_pid) override;
-        virtual void* MonitorClose(int tool_pid);
+        virtual void* MonitorClose(int tool_pid) override;
+        virtual int* Consult(std::string var_to_search) override;
 
     private:
         CLIENT* clnt = nullptr; // from Sun RPC

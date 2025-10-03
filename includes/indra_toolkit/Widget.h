@@ -14,7 +14,8 @@ namespace indra_toolkit
     {
         None            = 0,
         BackgroundColor = 1 << 0,
-        Padding         = 1 << 1
+        Padding         = 1 << 1,
+        ItemSpacing     = 1 << 2
     };
 
     inline UIStyleFlags operator|(UIStyleFlags a, UIStyleFlags b) 
@@ -99,7 +100,8 @@ namespace indra_toolkit
             virtual UIHorizontalAlignment GetHorizontalAlignment() const;
             virtual void SetHorizontalAlignment(UIHorizontalAlignment horizontalAlignment);
 
-            void SetPositionVars(const PositionVars& position_vars_) { m_posVars = position_vars_; }
+            void SetPositionVars(const PositionVars& in_pos_vars) { m_posVars = in_pos_vars; }
+            PositionVars GetPositionVars() const { return m_posVars; }
 
             //-----------------------------------------//
         

@@ -133,6 +133,8 @@ bool ToolApplication::InitGLFW()
     return true;
 }
 
+///////////////Window Logic////////////////////
+
 void ToolApplication::FramebufferSizeCallback(GLFWwindow* window_, int width_, int height_)
 {
     auto* app = static_cast<ToolApplication*>(glfwGetWindowUserPointer(window_));
@@ -241,26 +243,21 @@ void ToolApplication::Update()
         module.second->OnUpdate();
     }
 
+    DynamicWindowClamping();
+
     // New Frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
     // Process data from layers
-    for (auto& layer :layers){
+    for (auto& layer :layers)
+    {
         // std::cout << "Process layer at: " << layer->GetName() << std::endl;
-        layer->OnProcess();
+        if(layer->IsEnabled())
+            layer->OnProcess();
     }
     
-    int display_w, display_h;
-    glfwGetFramebufferSize(window, &display_w, &display_h);
-    int desiredWidth = clamp(display_w, wnd_min_width, wnd_width);
-    int desiredHeight = clamp(display_h, wnd_min_height, wnd_height);
-
-    if(clamp_OS_Window_Resize && (display_w < wnd_min_width || display_h < wnd_min_height))
-        glfwSetWindowSize(window, desiredWidth, desiredHeight); 
-
-    glViewport(0, 0, desiredWidth, desiredHeight);
 
     // Render view
     for (auto& layer :layers)
@@ -269,23 +266,9 @@ void ToolApplication::Update()
             layer->OnRender();
     }
 
-    for(Layer* layerToRemove : layers_to_remove)
-    {
-        auto it = std::find_if(layers.begin(), layers.end(),
-            [layerToRemove](const std::unique_ptr<Layer>& l) { return l.get() == layerToRemove; });
-
-        if (it != layers.end())
-        {
-            layers.erase(it); // erases and destroys the layer
-        }
-    }
-    layers_to_remove.clear();
+    DeferredLayerDestruction();
     
-    if(IsDebugEnabled())
-    {
-        ImGui::ShowMetricsWindow();
-        ImGui::ShowStyleEditor();
-    }
+    if(IsDebugEnabled()) UpdateDebugDraw();
 
     // Render OpenGL
     ImGui::Render();
@@ -383,4 +366,38 @@ void ToolApplication::EndModules()
     }
 
     module_map.clear();
+}
+
+void ToolApplication::DynamicWindowClamping()
+{
+    int display_w, display_h;
+    glfwGetFramebufferSize(window, &display_w, &display_h);
+    int desiredWidth = clamp(display_w, wnd_min_width, wnd_width);
+    int desiredHeight = clamp(display_h, wnd_min_height, wnd_height);
+
+    if(clamp_OS_Window_Resize && (display_w < wnd_min_width || display_h < wnd_min_height))
+        glfwSetWindowSize(window, desiredWidth, desiredHeight); 
+
+    glViewport(0, 0, desiredWidth, desiredHeight);
+}
+
+void ToolApplication::DeferredLayerDestruction()
+{
+    for(Layer* layerToRemove : layers_to_remove)
+    {
+        auto it = std::find_if(layers.begin(), layers.end(),
+            [layerToRemove](const std::unique_ptr<Layer>& l) { return l.get() == layerToRemove; });
+
+        if (it != layers.end())
+        {
+            layers.erase(it); // erases and destroys the layer
+        }
+    }
+    layers_to_remove.clear();
+}
+
+void ToolApplication::UpdateDebugDraw()
+{
+    ImGui::ShowMetricsWindow();
+    ImGui::ShowStyleEditor();
 }

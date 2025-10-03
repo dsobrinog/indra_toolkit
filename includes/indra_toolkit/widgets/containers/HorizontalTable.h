@@ -26,8 +26,6 @@ namespace indra_toolkit
             }
         }
 
-        virtual void OnProcessData() override {}
-
         virtual void Draw() override
         {
             int n = static_cast<int>(m_Children.size());

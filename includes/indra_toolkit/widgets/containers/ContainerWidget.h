@@ -4,6 +4,7 @@
 #include <indra_toolkit/Utils.h>
 
 #include <vector>
+#include <memory>
 #include <algorithm>
 #include <imgui.h>
 
@@ -18,28 +19,36 @@ namespace indra_toolkit
 
         virtual ~ContainerWidget()
         {
-            for (Widget* child : m_Children)
-            {
-                delete child;
-            }
-
-            m_Children.clear();
+            ResetChilds();
         }
 
-        void AddChild(Widget* child) 
+        virtual void OnProcessData() override;
+
+        void AddChild(const std::shared_ptr<Widget> child) 
         {
             m_Children.push_back(child);
             child->SetContainer(this);
             child->SetOwningLayer(GetOwningLayer());
         }
 
-        void RemoveChild(Widget* child)
+        void AddChild(Widget* child)
+        {
+            // Wrap raw pointer into shared_ptr → container owns it
+            std::shared_ptr<Widget> owned(child);
+
+            owned->SetContainer(this);
+            owned->SetOwningLayer(GetOwningLayer());
+
+            m_Children.emplace_back(std::move(owned));
+        }
+
+        void RemoveChild(const std::shared_ptr<Widget>& child)
         {
             auto it = std::find(m_Children.begin(), m_Children.end(), child);
             if (it != m_Children.end())
             {
+                (*it)->SetContainer(nullptr);
                 m_Children.erase(it);
-                child->SetContainer(nullptr);
             }
         }
 
@@ -48,7 +57,30 @@ namespace indra_toolkit
             m_Children.clear();
         }
 
-        int GetNumOfChilds() const { return m_Children.size() - 1; }
+        /// @brief Create a widget in the layer and returns a reference to edit.
+        /// @param widget_name Name of the widget 
+        /// @param ...args Constructor arguments
+        /// @return reference to the widget
+        template<typename T, typename... Args>
+        T& CreateChildWidget(Args&&... args)
+        {
+            static_assert(std::is_base_of<Widget, T>::value, 
+                "T must derive from Widget");
+
+            static_assert(std::is_constructible<T, Args...>::value,
+                "Layer::CreateWidget: Wrong constructor arguments for widget type T");
+                
+            auto widget = std::make_shared<T>(std::forward<Args>(args)...);
+            T& ref = *widget;
+            Widget* baseWidget = static_cast<Widget*>(widget.get());
+            baseWidget->SetContainer(this);
+            baseWidget->SetOwningLayer(GetOwningLayer());
+            
+            m_Children.emplace_back(widget);
+            return ref;
+        }
+
+        int GetNumOfChilds() const { return m_Children.size(); }
         //returns index of the child with the name passed. If not found it returns -1
         int GetIndexOfChild(const std::string& ChildName);
 
@@ -69,7 +101,7 @@ namespace indra_toolkit
         virtual void EndStyle() override;
 
     protected:
-        std::vector<Widget*> m_Children;
+        std::vector<std::shared_ptr<Widget>> m_Children;
 
         ImVec2 m_ItemPadding = { -1, -1 };          //Padding between the elements of the container (if its (-1, -1), we use ImGuiStyle ItemSpacing) 
         ImVec2 m_WindowPadding = { -1, -1};   

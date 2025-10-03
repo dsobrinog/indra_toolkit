@@ -3,6 +3,14 @@
 
 namespace indra_toolkit
 {
+    void ContainerWidget::OnProcessData()
+    {
+        for (size_t i = 0; i < m_Children.size(); i++)
+        {
+            m_Children[i]->OnProcessData();
+        }
+    }
+
     int ContainerWidget::GetIndexOfChild(const std::string& ChildName)
     {
         for (size_t i = 0; i < m_Children.size(); i++)
@@ -20,10 +28,14 @@ namespace indra_toolkit
     {
         ImVec2 ItemPadding;
         ImGuiStyle& style = ImGui::GetStyle();
-        if(m_ItemPadding.x == -1) ItemPadding.x = style.ItemSpacing.x;
-        else ItemPadding.x = m_ItemPadding.x;
-        if(m_ItemPadding.y == -1) ItemPadding.y = style.ItemSpacing.y;
-        else ItemPadding.y = m_ItemPadding.y;
+        if(HasFlag(m_style, indra_toolkit::UIStyleFlags::ItemSpacing))
+        {
+            ItemPadding = m_ItemPadding; //use custom
+        }
+        else 
+        {
+            ItemPadding = style.ItemSpacing; //use ImGui ItemSpacing
+        }
 
         return ItemPadding;
     }
@@ -31,7 +43,7 @@ namespace indra_toolkit
     ImVec2 ContainerWidget::GetAllPaddingBetweenItems()
     {
         ImVec2 ItemPadding = GetItemPadding();
-        int numOfItems = GetNumOfChilds();
+        int numOfItems = GetNumOfChilds() -1;
 
         return { ItemPadding.x * numOfItems, ItemPadding.y};
     }
@@ -59,6 +71,11 @@ namespace indra_toolkit
         {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, m_WindowPadding);
         }
+
+        if(HasFlag(m_style, UIStyleFlags::ItemSpacing))
+        {
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, m_ItemPadding);
+        }
     }
 
     void ContainerWidget::EndStyle()
@@ -69,6 +86,11 @@ namespace indra_toolkit
         }
 
         if(HasFlag(m_style, UIStyleFlags::Padding))
+        {
+            ImGui::PopStyleVar();
+        }
+
+        if(HasFlag(m_style, UIStyleFlags::ItemSpacing))
         {
             ImGui::PopStyleVar();
         }

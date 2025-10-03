@@ -65,7 +65,7 @@ void indra_toolkit::Widget::SetOwningLayer(Layer* owning_layer_)
 
 bool indra_toolkit::Widget::IsDebugEnabled() const
 {
-    return owning_layer->IsDebugEnabled() && draw_debug && IsEnabled();
+    return owning_layer->IsDebugEnabled() || (draw_debug && IsEnabled());
 }
 
 ImVec2 indra_toolkit::Widget::GetPosition() const
